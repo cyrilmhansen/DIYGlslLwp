@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright Cyril M. Hansen 2013
+  Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+-->
 <wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
     android:settingsActivity="com.me.mygdxgame.LivewallpaperSettings"
     android:thumbnail="@drawable/ic_diyglsllwp"/>
