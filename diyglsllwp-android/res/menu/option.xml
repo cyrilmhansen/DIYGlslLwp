@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  
+<item android:id="@+id/option"
+      android:title="Options"
+      android:icon="@android:drawable/ic_menu_preferences"
+      >
+  
+     <menu android:id="@+id/sousmenu">
+     <item android:id="@+id/favoris"
+           android:title="Favoris"   />  
+  
+     <item android:id="@+id/stats"
+           android:title="Stats"  />
+     </menu>
+</item>
+  
+<item android:id="@+id/quitter"
+     android:title="Quitter"
+      android:icon="@android:drawable/ic_menu_close_clear_cancel"
+     />
+</menu>
