@@ -139,6 +139,12 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 		checkIfOnlineOrExit();
 
+		// if (!Gdx.graphics.isGL20Available()) {
+		// Toast.makeText(ShaderGalleryActivity.this,
+		// "Open GL ES 2.0 Required", Toast.LENGTH_LONG).show();
+		// finish();
+		// }
+
 		if (askedPageIndex != currentPageIndex) {
 			// gallery page needs to be downloaded
 			updateGallery(askedPageIndex);
@@ -152,12 +158,6 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-
-		if (!Gdx.graphics.isGL20Available()) {
-			Toast.makeText(ShaderGalleryActivity.this,
-					"Open GL ES 2.0 Required", Toast.LENGTH_LONG).show();
-			finish();
-		}
 
 		// Create a new Handler that is being associated to the
 		// main thread.
@@ -252,19 +252,63 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		// TODO Access wall paper settings
 		// TODO Implement other menu options
 
-		// case R.id.option:
-		// Toast.makeText(ShaderGalleryActivity.this, "options",
-		// Toast.LENGTH_SHORT).show();
-		// return true;
-		// case R.id.favoris:
-		// Toast.makeText(ShaderGalleryActivity.this, "favoris",
-		// Toast.LENGTH_SHORT).show();
-		// return true;
-		// case R.id.stats:
-		// Toast.makeText(ShaderGalleryActivity.this, "stats",
-		// Toast.LENGTH_SHORT).show();
-		// return true;
-		case R.id.quitter:
+		case R.id.goToShader:
+			DialogUtils.inputDialog(this, "Input shader reference", false,
+					new InputDialogCallback() {
+
+						@Override
+						public void inputValue(String value) {
+							try {
+								// Change first list item ?
+								// update current code and go to full screen
+								// view ??
+								// TODO Use specific icon as visual hint for the
+								// first line
+								values[0].setBmp(null);
+								new InternetAsyncShaderTask(
+										ShaderGalleryActivity.this, 0)
+										.execute("http://glsl.heroku.com/item/"
+												+ value);
+							} catch (Exception ex) {
+								// nothing to do
+							}
+
+						}
+					});
+
+			return true;
+
+		case R.id.goToPage:
+			DialogUtils.inputDialog(this, "Input target gallery page number",
+					true, new InputDialogCallback() {
+
+						@Override
+						public void inputValue(String value) {
+							try {
+								askedPageIndex = Integer.valueOf(value);
+								updateGallery(askedPageIndex);
+							} catch (Exception ex) {
+								// nothing to do
+							}
+
+						}
+					});
+
+			return true;
+
+			// case R.id.option:
+			// Toast.makeText(ShaderGalleryActivity.this, "options",
+			// Toast.LENGTH_SHORT).show();
+			// return true;
+			// case R.id.favoris:
+			// Toast.makeText(ShaderGalleryActivity.this, "favoris",
+			// Toast.LENGTH_SHORT).show();
+			// return true;
+			// case R.id.stats:
+			// Toast.makeText(ShaderGalleryActivity.this, "stats",
+			// Toast.LENGTH_SHORT).show();
+			// return true;
+		case R.id.quit:
 			Toast.makeText(ShaderGalleryActivity.this, "Exiting",
 					Toast.LENGTH_SHORT).show();
 			finish();
@@ -405,7 +449,15 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 	@Override
 	protected void onDestroy() {
 		mHandler.removeCallbacks(mRequestFocus);
+		
 		super.onDestroy();
+	}
+
+	@Override
+	protected void onPause() {
+		progressDialog.dismiss();
+		
+		super.onPause();
 	}
 
 	/**
@@ -519,6 +571,9 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		mySurface = new DIYGslSurface(code, true, 4, true, true, 4);
 		mySurface.setScreenshotProc(this);
 		glslView = initializeForView(mySurface, cfg);
+
+		// impossible to check immediately for GL20 / Surface is created
+		// asynchronously
 
 		currentFragShaderProgram = code;
 

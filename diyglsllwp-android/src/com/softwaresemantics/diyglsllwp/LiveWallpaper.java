@@ -42,7 +42,13 @@ public class LiveWallpaper extends AndroidLiveWallpaperService {
 	}
 
 	protected void initGDX() {
+
+		if (listener != null) {
+			listener.dispose();
+		}
+
 		if (shaderGLSL != null) {
+
 			listener = new DIYGslSurface(shaderGLSL,
 					prefs.isReductionFactorEnabled(),
 					prefs.getReductionFactor(), prefs.isTouchEnabled(),
@@ -75,9 +81,9 @@ public class LiveWallpaper extends AndroidLiveWallpaperService {
 	}
 
 	protected static void notifyShaderChange() {
-		if (isRunning) {
-			instance.reloadShaderAndInitGDX();
-		}
+//		if (isRunning) {
+//			instance.reloadShaderAndInitGDX();
+//		}
 	}
 
 	public boolean isRunning() {

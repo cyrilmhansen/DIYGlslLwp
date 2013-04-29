@@ -13,5 +13,9 @@
     <string name="download">Download</string>
     <string name="viewFS">FullScreen</string>
     <string name="edit">Edit</string>
+    <string name="moveToShader">Move to Shader #</string>
+    <string name="moveToPage">Move to Page #</string>
+    
+    
 
 </resources>

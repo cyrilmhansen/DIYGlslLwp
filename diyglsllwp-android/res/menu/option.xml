@@ -3,24 +3,32 @@
   Copyright Cyril M. Hansen 2013
   Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-  
-<item android:id="@+id/option"
-      android:title="Options"
-      android:icon="@android:drawable/ic_menu_preferences"
-      >
-  
-     <menu android:id="@+id/sousmenu">
-     <item android:id="@+id/favoris"
-           android:title="Favoris"   />  
-  
-     <item android:id="@+id/stats"
-           android:title="Stats"  />
-     </menu>
-</item>
-  
-<item android:id="@+id/quitter"
-     android:title="Quitter"
-      android:icon="@android:drawable/ic_menu_close_clear_cancel"
-     />
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/option"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="Options">
+        <menu android:id="@+id/sousmenu" >
+            <item
+                android:id="@+id/favoris"
+                android:title="Favoris"/>
+            <item
+                android:id="@+id/stats"
+                android:title="Stats"/>
+        </menu>
+    </item>
+    
+    <item
+        android:id="@+id/goToShader"
+        android:title="@string/moveToShader"/>
+    
+    <item
+        android:id="@+id/goToPage"
+        android:title="@string/moveToPage"/>
+    <item
+        android:id="@+id/quit"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:title="Quit"/>
+
 </menu>

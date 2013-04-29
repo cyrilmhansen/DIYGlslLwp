@@ -104,7 +104,7 @@ public class DIYGslSurface implements ApplicationListener,
 		// GL 20 Required
 		if (!Gdx.graphics.isGL20Available()) {
 			Gdx.app.log("DIYGslSurface", "isGL20Available returns false");
-			Gdx.app.exit();
+			// Gdx.app.exit();
 		}
 
 		Gdx.input.setInputProcessor(new GestureDetector(this));
@@ -159,6 +159,23 @@ public class DIYGslSurface implements ApplicationListener,
 	}
 
 	public void render() {
+
+		// GL 20 Required
+		if (!Gdx.graphics.isGL20Available()) {
+			Gdx.app.log("DIYGslSurface", "isGL20Available returns false");
+
+			// Gdx.app.exit();
+
+			BitmapFont font = new BitmapFont();
+			batch.begin();
+			font.draw(batch, "sGL20Available returns false", 50, 50);
+			batch.end();
+			return;
+
+			// throw new
+			// RuntimeException("expected GL 2 ES context / missing GL2");
+		}
+
 		// render is not done for dummy frames in time dithering mode
 		boolean doReallyRender = true;
 
@@ -183,22 +200,48 @@ public class DIYGslSurface implements ApplicationListener,
 
 		if (doReallyRender) {
 			// this is the main render function
-			renderShaderonMesh();
+			try {
+				renderShaderonMesh();
+			} catch (Exception ex) {
+				String msg = ex.getMessage() != null ? ex.getMessage()
+						: "null exception msg";
+				Gdx.app.log("GDX render", msg);
+			}
 		}
 
 		if (m_fbo != null) {
-			m_fbo.end();
-
+			try {
+				m_fbo.end();
+			} catch (Exception ex) {
+				String msg = ex.getMessage() != null ? ex.getMessage()
+						: "null exception msg";
+				Gdx.app.log("m_fbo render", msg);
+			}
 			batch.begin();
-			batch.draw(m_fboRegion, 0, 0, effectiveSurfaceWidth,
-					effectiveSurfaceHeight);
-			batch.end();
+			try {
+
+				batch.draw(m_fboRegion, 0, 0, effectiveSurfaceWidth,
+						effectiveSurfaceHeight);
+
+			} catch (Exception ex) {
+				String msg = ex.getMessage() != null ? ex.getMessage()
+						: "null exception msg";
+				Gdx.app.log("m_fbo scale", msg);
+			} finally {
+				batch.end();
+
+			}
 		}
 
 		// Process snapshot requests if any
 		// Proper gl context for this is only available in render() aka here
+
 		if (doscreenShotRequest && screenshotProc != null) {
-			screenshotProc.doProcessScreenShot();
+			try {
+				screenshotProc.doProcessScreenShot();
+			} catch (Exception ex) {
+				Gdx.app.log("do screen shot", ex.getLocalizedMessage());
+			}
 			doscreenShotRequest = false;
 		}
 
