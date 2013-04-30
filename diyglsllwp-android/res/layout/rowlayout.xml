@@ -19,8 +19,9 @@
 
     <TextView
         android:id="@+id/label"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="2"
         android:text="@+id/label" >
         android:textSize="20sp" >        
     </TextView>
@@ -28,22 +29,25 @@
     <Button
         android:id="@+id/buttonViewFS"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:text="@string/viewFS" />
 
     <Button
         android:id="@+id/buttonEdit"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:text="@string/edit" />
 
     <Button
         android:id="@+id/buttonDownload"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:text="@string/download" />
 
 </LinearLayout>

@@ -23,7 +23,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +38,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.badlogic.gdx.Gdx;
@@ -48,6 +48,9 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask.UINotifier;
 
 // TODO : Message de rechargement au service LWP lorsque l'on selectionne un autre shader pour le fond d'ecran
 // Focus sur selection apres clic initial sur liste principale
@@ -67,13 +70,13 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
  */
 
 public class ShaderGalleryActivity extends AndroidApplication implements
-		ScreenshotProcessor {
+		ScreenshotProcessor, ClickHandler {
 
-	private static final String LWP_TXT = "lwp.txt";
+	static final String LWP_TXT = "lwp.txt";
 
-	private static final String LWP_DIR_NAME = "lwp";
+	static final String LWP_DIR_NAME = "lwp";
 
-	private static final String DIY_GLSL_LWP_DIR_NAME = "DiyGlslLwp";
+	static final String DIY_GLSL_LWP_DIR_NAME = "DiyGlslLwp";
 
 	private static final String COM_HEROKU_GLSL = "com.heroku.glsl";
 
@@ -127,7 +130,9 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 	private void checkIfOnlineOrExit() {
 		if (!isOnline()) {
-			Toast.makeText(this, "Network access required", Toast.LENGTH_LONG);
+			Toast.makeText(this,
+					getResources().getString(R.string.networkRequired),
+					Toast.LENGTH_LONG).show();
 			this.exit();
 		}
 	}
@@ -176,8 +181,8 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		// Try to to keep the UI fluid
-		android.os.Process
-				.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+		// android.os.Process
+		// .setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 
 		nbElementParPage = 50;
 		values = new Entry[nbElementParPage];
@@ -235,6 +240,17 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 				});
 
 		progressDialog = new ProgressDialog(this);
+		updateStatusLabel(getResources().getString(R.string.loadingStatus));
+	}
+
+	public void updateStatusLabel(String alternateLabel) {
+		TextView statusTextView = (TextView) findViewById(R.id.statusLabel);
+		if (alternateLabel != null) {
+			statusTextView.setText(alternateLabel);
+		} else {
+			statusTextView.setText("http://glsl.heroku.com/?page="
+					+ currentPageIndex);
+		}
 	}
 
 	/**
@@ -253,7 +269,8 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		// TODO Implement other menu options
 
 		case R.id.goToShader:
-			DialogUtils.inputDialog(this, "Input shader reference", false,
+			DialogUtils.inputDialog(this,
+					getResources().getString(R.string.inputShaderRef), false,
 					new InputDialogCallback() {
 
 						@Override
@@ -279,8 +296,9 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 			return true;
 
 		case R.id.goToPage:
-			DialogUtils.inputDialog(this, "Input target gallery page number",
-					true, new InputDialogCallback() {
+			DialogUtils.inputDialog(this,
+					getResources().getString(R.string.inputGalleryPage), true,
+					new InputDialogCallback() {
 
 						@Override
 						public void inputValue(String value) {
@@ -309,7 +327,8 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 			// Toast.LENGTH_SHORT).show();
 			// return true;
 		case R.id.quit:
-			Toast.makeText(ShaderGalleryActivity.this, "Exiting",
+			Toast.makeText(ShaderGalleryActivity.this,
+					getResources().getString(R.string.exiting),
 					Toast.LENGTH_SHORT).show();
 			finish();
 			return true;
@@ -323,10 +342,14 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 	private void updateGallery(int pageIndex) {
 		if (!isOnline()) {
-			Toast.makeText(this, "Network access required", Toast.LENGTH_LONG);
+			Toast.makeText(this,
+					getResources().getString(R.string.networkRequired),
+					Toast.LENGTH_LONG).show();
 			// ?? call finish();
 		} else {
-			progressDialog.setMessage("Loading gallery page #" + pageIndex);
+			progressDialog.setMessage(getResources().getString(
+					R.string.loadingGalleryPage)
+					+ pageIndex);
 			progressDialog.show();
 
 			// differed loading of gallery
@@ -340,7 +363,9 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 		hidePreviousSelectionButton();
 
-		progressDialog.setMessage("Loading shader for " + item.getRefId());
+		progressDialog.setMessage(getResources().getString(
+				R.string.loadingShader)
+				+ item.getRefId());
 		progressDialog.show();
 
 		// shader download task that will call us back to update UI
@@ -376,7 +401,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 				startActivityForResult(intent, REQUEST_SET_LIVE_WALLPAPER);
 
 				Toast.makeText(ShaderGalleryActivity.this,
-						"Manual action required - Select DIY Glsl LWP",
+						getResources().getString(R.string.manualSelectLWP),
 						Toast.LENGTH_LONG).show();
 			} catch (android.content.ActivityNotFoundException e2) {
 				// that failed, let's try the nook intent
@@ -386,8 +411,10 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 					startActivity(intent);
 				} catch (android.content.ActivityNotFoundException e) {
 					// everything failed, let's notify the user
-					Toast.makeText(ShaderGalleryActivity.this,
-							"Error while launching wallpaper selector",
+					Toast.makeText(
+							ShaderGalleryActivity.this,
+							getResources().getString(
+									R.string.errorLaunchingLWPSelector),
 							Toast.LENGTH_SHORT).show();
 				}
 			}
@@ -414,7 +441,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 	public void galleryUpdated(int askedPageIndex) {
 		adapter.notifyDataSetChanged();
 		currentPageIndex = askedPageIndex;
-
+		updateStatusLabel(null);
 		progressDialog.dismiss();
 	}
 
@@ -449,14 +476,14 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 	@Override
 	protected void onDestroy() {
 		mHandler.removeCallbacks(mRequestFocus);
-		
+
 		super.onDestroy();
 	}
 
 	@Override
 	protected void onPause() {
 		progressDialog.dismiss();
-		
+
 		super.onPause();
 	}
 
@@ -554,6 +581,10 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		}
 	};
 
+	private Button cancelButton;
+
+	private Button setAsLWPButton;
+
 	public void runShaderinPreview(String code) {
 		if (glslView != null) {
 			// Remove previously created view
@@ -568,9 +599,12 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		cfg.resolutionStrategy = new PreviewResStrategy(this, _200_PX);
 
 		// TODO : settings for preview
-		mySurface = new DIYGslSurface(code, true, 4, true, true, 4);
+		mySurface = new DIYGslSurface(code, true, 4, true, true, true, 4);
 		mySurface.setScreenshotProc(this);
 		glslView = initializeForView(mySurface, cfg);
+
+		// Add callback for click in preview mode
+		mySurface.addClickHandler(this);
 
 		// impossible to check immediately for GL20 / Surface is created
 		// asynchronously
@@ -612,51 +646,16 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		// FIXME assert
 		Entry value = values[currentSelectedIndex];
 		return saveCurrentSelectedShader(new File(
-				getDiyGlslLwpSubDir(COM_HEROKU_GLSL), value.getRefId() + TXT));
-	}
-
-	public static File getDiyGlslLwpDir() {
-		if (!Environment.getExternalStorageState().equals(
-				Environment.MEDIA_MOUNTED)) {
-			Log.e(DIY_GLSL_LWP_DIR_NAME, "Unable to access external storage");
-
-			// To be tested
-			Toast.makeText(null, "Unable to access external storage",
-					Toast.LENGTH_LONG).show();
-			// throw new RuntimeException("Unable to access external storage");
-
-			return null;
-		}
-
-		File diyGlslLwpDir = new File(
-				Environment.getExternalStorageDirectory(),
-				DIY_GLSL_LWP_DIR_NAME);
-		return diyGlslLwpDir;
-	}
-
-	public static File getDiyGlslLwpSubDir(String subdirName) {
-		return new File(getDiyGlslLwpDir(), subdirName);
+				ShaderStorage.getDiyGlslLwpSubDir(this, COM_HEROKU_GLSL),
+				value.getRefId() + TXT));
 	}
 
 	public File saveCurrentSelectedShaderAsLWP() {
-		File lwp = saveCurrentSelectedShader(getDiyGlslLwpShaderFile());
+		File lwp = saveCurrentSelectedShader(ShaderStorage
+				.getDiyGlslLwpShaderFile(this));
 		// TODO : to be tested
-		LiveWallpaper.notifyShaderChange();
+		LiveWallpaper.notifyShaderChange(this);
 		return lwp;
-	}
-
-	private static File getDiyGlslLwpShaderFile() {
-		return new File(getDiyGlslLwpSubDir(LWP_DIR_NAME), LWP_TXT);
-	}
-
-	public static File getCustomShaderLWPFile() {
-		// FIXME assert
-		File lwpShader = getDiyGlslLwpShaderFile();
-		if (lwpShader.exists()) {
-			return lwpShader;
-		} else {
-			return null;
-		}
 	}
 
 	public File saveCurrentSelectedShader(File targetFile) {
@@ -814,24 +813,24 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 		mySurface = new DIYGslSurface(currentFragShaderProgram,
 				prefs.isReductionFactorEnabled(), prefs.getReductionFactor(),
-				prefs.isTouchEnabled(), prefs.isTimeDithering(),
+				true, true, prefs.isTimeDithering(),
 				prefs.getTimeDitheringFactor());
 
 		glslView = initializeForView(mySurface, cfg);
 
-		// TODO more dynamic layout
-		final Button cancelButton = new Button(this);
+		cancelButton = new Button(this);
 		cancelButton.setHeight(FS_BUTTON_HEIGHT);
-		cancelButton.setText("Annuler");
+		cancelButton.setText(getResources().getString(R.string.cancel));
 
-		final Button setAsLWPButton = new Button(this);
+		setAsLWPButton = new Button(this);
 		setAsLWPButton.setHeight(FS_BUTTON_HEIGHT);
-		setAsLWPButton.setText("Fond Ecran");
+		setAsLWPButton.setText(getResources().getString(R.string.setAsLWP));
 
 		setAsLWPButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				ShaderGalleryActivity.this.setAsLWP();
+				backToMainView();
 			}
 
 		});
@@ -839,28 +838,14 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		cancelButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Toast.makeText(ShaderGalleryActivity.this, "Back",
-				// Toast.LENGTH_SHORT).show();
-
-				glayout.removeView(cancelButton);
-				glayout.removeView(glslView);
-
-				createGDXPreview(currentFragShaderProgram);
-				glayout.addView(rootMainView, 1);
-
-				getWindow().clearFlags(
-						WindowManager.LayoutParams.FLAG_FULLSCREEN);
-				getWindow().setFlags(
-						WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
-						WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-
+				backToMainView();
 			}
 
 		});
 
 		glayout.removeView(rootMainView);
-		glayout.addView(cancelButton);
 		glayout.addView(setAsLWPButton);
+		glayout.addView(cancelButton);
 		glayout.addView(glslView, 0);
 
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -868,6 +853,20 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		getWindow().clearFlags(
 				WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 
+	}
+
+	private void backToMainView() {
+		glayout.removeView(setAsLWPButton);
+		glayout.removeView(cancelButton);
+		glayout.removeView(glslView);
+
+		createGDXPreview(currentFragShaderProgram);
+		glayout.addView(rootMainView, 1);
+
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setFlags(
+				WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 	}
 
 	protected void setAsLWP() {
@@ -898,6 +897,31 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 	@Override
 	protected void onStop() {
 		super.onStop();
+	}
+
+	@Override
+	public void onClick(int x, int y) {
+		runOnUiThread(new UIFullViewRunnable(this));
+	}
+
+	private void goToFullViewIfPossible() {
+		if (currentFragShaderProgram != null) {
+			setupFullScreenView();
+		}
+	}
+
+	class UIFullViewRunnable implements Runnable {
+
+		private ShaderGalleryActivity parentActivity;
+
+		public UIFullViewRunnable(ShaderGalleryActivity activity) {
+			this.parentActivity = activity;
+		}
+
+		public void run() {
+			this.parentActivity.setupFullScreenView();
+			;
+		}
 	}
 
 }

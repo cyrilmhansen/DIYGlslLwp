@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright Cyril M. Hansen 2013
+  Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+-->
+<resources>
+
+    <string name="app_name">DIY GLSL LWP</string>
+    <string name="title_activity_settings">DIY Glsl Live Wallpaper Settings</string>
+    <string name="title_app">DIY Glsl Live Wallpaper and Gallery</string>
+    <string name="previous_page">Previous</string>
+    <string name="next_page">Next</string>
+    <string name="download">Download</string>
+    <string name="viewFS">FullScreen</string>
+    <string name="edit">Edit</string>
+    <string name="moveToShader">Move to Shader #</string>
+    <string name="moveToPage">Move to Page #</string>
+    
+    
+
+</resources>

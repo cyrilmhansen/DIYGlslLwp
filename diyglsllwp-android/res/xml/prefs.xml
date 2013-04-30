@@ -6,32 +6,41 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <CheckBoxPreference
+        android:defaultValue="false"
         android:key="touch"
-        android:title="Enable Touch" >
+        android:title="@string/enableTouch" >
     </CheckBoxPreference>
-    
     <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="displayFPSLWP"
+        android:title="@string/displayFPSLWP" >
+    </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="true"
         android:key="reducedResolution"
-        android:title="Improve Performance by reducing resolution" >
+        android:title="@string/reducedResolution" >
     </CheckBoxPreference>
 
     <ListPreference
+        android:defaultValue="4"
         android:entries="@array/reductionFactor"
         android:entryValues="@array/reductionFactorValues"
         android:key="reductionFactor"
-        android:title="Resolution reduction factor" >
+        android:title="@string/reductionFactor" >
     </ListPreference>
 
     <CheckBoxPreference
+        android:defaultValue="true"
         android:key="timeDithering"
-        android:title="Improve reactivity by reducing framerate" >
+        android:title="@string/timeDithering" >
     </CheckBoxPreference>
 
     <ListPreference
+        android:defaultValue="4"
         android:entries="@array/reductionFactor"
         android:entryValues="@array/reductionFactorValues"
         android:key="timeDitheringFactor"
-        android:title="Framerate reduction factor" >
+        android:title="@string/timeDitheringFactor" >
     </ListPreference>
 
 </PreferenceScreen>

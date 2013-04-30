@@ -15,7 +15,23 @@
     <string name="edit">Edit</string>
     <string name="moveToShader">Move to Shader #</string>
     <string name="moveToPage">Move to Page #</string>
-    
-    
+    <string name="enableTouch">Enable touch</string>
+    <string name="displayFPSLWP">Display FPS stats in Wallpaper mode</string>
+    <string name="reducedResolution">Improve Performance by reducing resolution</string>
+    <string name="reductionFactor">Resolution reduction factor</string>
+    <string name="timeDithering">Improve reactivity by reducing framerate</string>
+    <string name="timeDitheringFactor">Framerate reduction factor</string>
+    <string name="networkRequired">Network connection required. Exiting&#8230;</string>
+    <string name="loadingStatus">Loading&#8230;</string>
+    <string name="inputShaderRef">Input shader reference</string>
+    <string name="inputGalleryPage">Input target gallery page number</string>
+    <string name="exiting">Exiting</string>
+    <string name="loadingGalleryPage">Loading Page #</string>
+    <string name="loadingShader">Loading Shader #</string>
+    <string name="manualSelectLWP">Manual action required - Select DIY Glsl LWP</string>
+    <string name="errorLaunchingLWPSelector">Error while launching wallpaper selector</string>
+    <string name="unableAccessExtStorage">Unable to access external storage (SD)</string>
+    <string name="cancel">Cancel</string>
+    <string name="setAsLWP">Set as Wallpaper</string>
 
 </resources>

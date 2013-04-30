@@ -6,12 +6,12 @@
 <resources>
 
     <string-array name="reductionFactor">
-        <item>Light (2)</item>
-        <item>Moderate (4)</item>
-        <item>Strong (8)</item>
+        <item>Léger (2)</item>
+        <item>Modéré (4)</item>
+        <item>Fort (8)</item>
         <item>Extreme (16)</item>
-        <item>Almost Desperate (24)</item>
-        <item>Desperate (32)</item>
+        <item>Quasi Déséspéré (24)</item>
+        <item>Désespéré (32)</item>
     </string-array>
     <string-array name="reductionFactorValues">
         <item>"2"</item>

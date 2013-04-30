@@ -4,5 +4,5 @@
   Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
 -->
 <wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
-    android:settingsActivity="com.me.mygdxgame.LivewallpaperSettings"
+    android:settingsActivity="com.softwaresemantics.diyglsllwp.LivewallpaperSettings"
     android:thumbnail="@drawable/ic_diyglsllwp"/>

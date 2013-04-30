@@ -21,6 +21,8 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 
 public class DIYGslSurface implements ApplicationListener,
 		AndroidWallpaperListener, GestureListener {
@@ -63,6 +65,12 @@ public class DIYGslSurface implements ApplicationListener,
 
 	private String errorMsg;
 
+	private boolean showFPS = true;
+
+	private BitmapFont font;
+
+	private ClickHandler listener;
+
 	// GL ES 2.0 is required
 	public boolean needsGL20() {
 		return true;
@@ -70,8 +78,8 @@ public class DIYGslSurface implements ApplicationListener,
 
 	/** detailed constructor */
 	public DIYGslSurface(String shaderGLSL, boolean reductionFactorEnabled,
-			int reductionFactor, boolean touchEnabled, boolean timeDither,
-			int timeDitherFactor) {
+			int reductionFactor, boolean touchEnabled, boolean displayFPSLWP,
+			boolean timeDither, int timeDitherFactor) {
 		this.shaderProgram = shaderGLSL;
 		this.m_fboEnabled = reductionFactorEnabled;
 		this.m_fboScaler = reductionFactor;
@@ -80,6 +88,7 @@ public class DIYGslSurface implements ApplicationListener,
 		this.timeDitheringFactor = timeDitherFactor;
 
 		this.touchEnabled = touchEnabled;
+		this.showFPS = displayFPSLWP;
 
 	}
 
@@ -107,6 +116,10 @@ public class DIYGslSurface implements ApplicationListener,
 			// Gdx.app.exit();
 		}
 
+		// Ici attendre 1 secondes pour etre sur que les ressources gl soient
+		// libres ???
+		// plutot dans on Resume ???
+
 		Gdx.input.setInputProcessor(new GestureDetector(this));
 
 		setupShader();
@@ -126,7 +139,7 @@ public class DIYGslSurface implements ApplicationListener,
 		mesh = genUnitRectangle();
 		mesh.getVertexAttribute(Usage.Position).alias = "a_position";
 
-		batch = new SpriteBatch();
+		reserveRessources();
 
 		// set the cursor somewhere else than @ 0,0
 		mouseCursorX = 0.5f;
@@ -164,20 +177,12 @@ public class DIYGslSurface implements ApplicationListener,
 		if (!Gdx.graphics.isGL20Available()) {
 			Gdx.app.log("DIYGslSurface", "isGL20Available returns false");
 
-			// Gdx.app.exit();
-
-			BitmapFont font = new BitmapFont();
+			// Gdx.app.exit()
 			batch.begin();
 			font.draw(batch, "sGL20Available returns false", 50, 50);
 			batch.end();
 			return;
-
-			// throw new
-			// RuntimeException("expected GL 2 ES context / missing GL2");
 		}
-
-		// render is not done for dummy frames in time dithering mode
-		boolean doReallyRender = true;
 
 		if (handleErrorAndSlowHardware()) {
 			return;
@@ -188,28 +193,40 @@ public class DIYGslSurface implements ApplicationListener,
 		if (m_fboEnabled) // enable or disable the supersampling
 		{
 			initRenderFramebufferIfNeeded();
+		}
 
-			if (timeDithering) {
-				if (nbRender % timeDitheringFactor == 0) {
-					m_fbo.begin();
-				} else {
-					doReallyRender = false;
-				}
+		// render is not done for dummy frames in time dithering mode
+		// boolean doReallyRender = true;
+		if (timeDithering) {
+			if (nbRender % timeDitheringFactor != 0) {
+				// doReallyRender = false;
+				// don't clear view, don't render, don't process screenshots
+				return;
 			}
 		}
 
-		if (doReallyRender) {
-			// this is the main render function
-			try {
-				renderShaderonMesh();
-			} catch (Exception ex) {
-				String msg = ex.getMessage() != null ? ex.getMessage()
-						: "null exception msg";
-				Gdx.app.log("GDX render", msg);
-			}
+		// if (doReallyRender) {
+		// main REAL render function
+		if (m_fboEnabled) // enable or disable the supersampling
+		{
+			m_fbo.begin();
 		}
 
-		if (m_fbo != null) {
+		try {
+			// Clear surface / Black background
+			// TODO Pref background color
+
+			Gdx.gl20.glClearColor(0, 0, 0, 1);
+			Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+			renderShaderonMesh();
+		} catch (Exception ex) {
+			String msg = ex.getMessage() != null ? ex.getMessage()
+					: "null exception msg";
+			Gdx.app.log("GDX render", msg);
+		}
+
+		if (m_fboEnabled) {
 			try {
 				m_fbo.end();
 			} catch (Exception ex) {
@@ -217,11 +234,14 @@ public class DIYGslSurface implements ApplicationListener,
 						: "null exception msg";
 				Gdx.app.log("m_fbo render", msg);
 			}
-			batch.begin();
-			try {
 
+			batch.begin();
+
+			try {
+				batch.disableBlending();
 				batch.draw(m_fboRegion, 0, 0, effectiveSurfaceWidth,
 						effectiveSurfaceHeight);
+				batch.enableBlending();
 
 			} catch (Exception ex) {
 				String msg = ex.getMessage() != null ? ex.getMessage()
@@ -229,9 +249,17 @@ public class DIYGslSurface implements ApplicationListener,
 				Gdx.app.log("m_fbo scale", msg);
 			} finally {
 				batch.end();
-
 			}
 		}
+
+		if (showFPS) {
+			batch.begin();
+			font.draw(batch, "FPS:" + Gdx.graphics.getFramesPerSecond(),
+					Gdx.graphics.getWidth() - 60, 15);
+			batch.end();
+		}
+
+		// }
 
 		// Process snapshot requests if any
 		// Proper gl context for this is only available in render() aka here
@@ -263,7 +291,6 @@ public class DIYGslSurface implements ApplicationListener,
 			}
 
 			// FIXME : Not tested ! May crash
-			BitmapFont font = new BitmapFont();
 			font.draw(batch, errorMsg, 50, 50);
 
 			return true;
@@ -282,7 +309,7 @@ public class DIYGslSurface implements ApplicationListener,
 		// Use RGBA8888 to allow the use of a bitmap beneath and transparency
 		// later
 		// For now, waste of precious gpu ressources... ???
-		m_fbo = new FrameBuffer(Format.RGBA8888,
+		m_fbo = new FrameBuffer(Format.RGB888,
 				(int) (effectiveSurfaceWidth / m_fboScaler),
 				(int) (effectiveSurfaceHeight / m_fboScaler), false);
 		m_fboRegion = new TextureRegion(m_fbo.getColorBufferTexture());
@@ -401,13 +428,24 @@ public class DIYGslSurface implements ApplicationListener,
 	 * handler for android resume event
 	 */
 	public void resume() {
+		try {
+			Thread.sleep(500);
+		} catch (Exception ex) {
+			Gdx.app.log("resume", "resume/delay", ex);
+		}
+		// ou reporter au premier render ?
+
+		// Force recreation of buffers
+		m_fbo = null;
+
 		reserveRessources();
 	}
 
 	private void reserveRessources() {
 		batch = new SpriteBatch();
+		font = new BitmapFont();
 
-		if (m_fboEnabled && m_fbo == null) {
+		if (m_fboEnabled) {
 			initRenderFramebufferIfNeeded();
 		}
 	}
@@ -425,6 +463,9 @@ public class DIYGslSurface implements ApplicationListener,
 	 * handler for touchDown Update cursor position if useful
 	 */
 	public boolean touchDown(float x, float y, int pointer, int button) {
+		if (listener != null) {
+			listener.onClick((int) x, (int)y);
+		}
 		if (touchEnabled) {
 			// update mouse cursor pos
 			mouseCursorX = x * 1.0f / renderSurfaceWidth;
@@ -440,7 +481,6 @@ public class DIYGslSurface implements ApplicationListener,
 	 * tap event handler (ignored)
 	 */
 	public boolean tap(float x, float y, int count, int button) {
-		// ignore event
 		return false;
 	}
 
@@ -515,6 +555,11 @@ public class DIYGslSurface implements ApplicationListener,
 
 	public void setScreenshotProc(ScreenshotProcessor screenshotProc) {
 		this.screenshotProc = screenshotProc;
+	}
+
+	public void addClickHandler(ClickHandler listener) {
+		this.listener = listener;
+
 	}
 
 }

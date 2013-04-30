@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright Cyril M. Hansen 2013
+  Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+-->
+<resources>
+
+    <string name="app_name">DoItYourself GLSL LiveWallPaper</string>
+    <string name="title_activity_settings">Préférences pour DIY GLSL LiveWallPaper</string>
+    <string name="title_app">DoItYourself GLSL Fond d\'écran animé et Gallerie</string>
+    <string name="previous_page">Précédent</string>
+    <string name="next_page">Suivant</string>
+    <string name="download">Enregistrer</string>
+    <string name="viewFS">Aggrandir</string>
+    <string name="edit">Editer</string>
+    <string name="moveToShader">Aller au Shader #</string>
+    <string name="moveToPage">Aller à la Page #</string>
+    <string name="enableTouch">Sensible au toucher</string>
+    <string name="displayFPSLWP">Affichage des stats FPS</string>
+    <string name="reducedResolution">Réduire la résolution pour améliorer les performances</string>
+    <string name="reductionFactor">Facteur de réduction de la résolution</string>
+    <string name="timeDithering">Réduire la fréquence d\'affichage pour réduire la charge</string>
+    <string name="timeDitheringFactor">Facteur de réduction de la fréquence d\'affichage</string>
+    <string name="networkRequired">Connection réseau requise. Abandon&#8230;</string>
+    <string name="loadingStatus">Chargement en cours&#8230;</string>
+    <string name="inputShaderRef">Référence du shader à charger</string>
+    <string name="inputGalleryPage">Page de la gallerie à atteindre</string>
+    <string name="exiting">Abandon&#8230;</string>
+    <string name="loadingGalleryPage">Chargement Gallerie Page #</string>
+    <string name="loadingShader">Chargement Shader #</string>
+    <string name="manualSelectLWP">Action manuelle requise - Selectionner DIY Glsl LWP</string>
+    <string name="errorLaunchingLWPSelector">Erreur au lancement du sélecteur de fond animé</string>
+    <string name="unableAccessExtStorage">Accès impossible au stockage externe (carte SD)</string>
+    <string name="cancel">Annuler</string>
+    <string name="setAsLWP">Choisir comme fond d\'écran</string>
+
+</resources>

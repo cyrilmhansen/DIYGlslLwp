@@ -15,6 +15,15 @@
         android:layout_weight="1" >
     </ListView>
 
+    <TextView
+        android:id="@+id/statusLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:ems="10"
+        android:text="" >
+    </TextView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
