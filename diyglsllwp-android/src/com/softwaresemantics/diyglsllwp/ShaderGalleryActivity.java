@@ -48,9 +48,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask.UINotifier;
 
 // TODO : Message de rechargement au service LWP lorsque l'on selectionne un autre shader pour le fond d'ecran
 // Focus sur selection apres clic initial sur liste principale
@@ -72,15 +69,9 @@ import com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask.UINotifier;
 public class ShaderGalleryActivity extends AndroidApplication implements
 		ScreenshotProcessor, ClickHandler {
 
-	static final String LWP_TXT = "lwp.txt";
-
-	static final String LWP_DIR_NAME = "lwp";
-
 	static final String DIY_GLSL_LWP_DIR_NAME = "DiyGlslLwp";
 
 	private static final String COM_HEROKU_GLSL = "com.heroku.glsl";
-
-	private static final String TXT = ".txt";
 
 	private static final int _200_PX = 200;
 
@@ -644,35 +635,38 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 	public File saveCurrentSelectedShader() {
 		// FIXME assert
-		Entry value = values[currentSelectedIndex];
-		return saveCurrentSelectedShader(new File(
-				ShaderStorage.getDiyGlslLwpSubDir(this, COM_HEROKU_GLSL),
-				value.getRefId() + TXT));
+		String refId = "default";
+		if (currentSelectedIndex >= 0) {
+			refId = values[currentSelectedIndex].getRefId();
+		}
+		return saveCurrentSelectedShader(
+				ShaderStorage.getDiyGlslLwpSubDir(this, COM_HEROKU_GLSL), refId);
 	}
 
 	public File saveCurrentSelectedShaderAsLWP() {
-		File lwp = saveCurrentSelectedShader(ShaderStorage
-				.getDiyGlslLwpShaderFile(this));
-		// TODO : to be tested
+		File lwp = saveCurrentSelectedShader(
+				ShaderStorage.getDiyGlslLwpShaderDir(this), ShaderStorage.LWP);
+
 		LiveWallpaper.notifyShaderChange(this);
 		return lwp;
 	}
 
-	public File saveCurrentSelectedShader(File targetFile) {
+	public File saveCurrentSelectedShader(File targetDir, String prefix) {
 		// fixme assert
-		Entry value = values[currentSelectedIndex];
-		String shaderPrg = currentFragShaderProgram;
 
+		String shaderPrg = currentFragShaderProgram;
+		File targetFile = null;
 		try {
 			// SD Ext
-			targetFile.getParentFile().mkdirs();
+			targetDir.mkdirs();
 
+			targetFile = new File(targetDir, prefix + ShaderStorage.TXT);
 			PrintStream ps = new PrintStream(targetFile);
 			ps.print(shaderPrg);
 			ps.close();
 
-			screenShotFilename = new File(targetFile.getParentFile(),
-					value.getRefId() + ".jpg").getAbsolutePath();
+			screenShotFilename = new File(targetDir, prefix + ShaderStorage.JPG)
+					.getAbsolutePath();
 
 			// Get callback during next redraw for screenshot
 			mySurface.setDoscreenShotRequest(true);

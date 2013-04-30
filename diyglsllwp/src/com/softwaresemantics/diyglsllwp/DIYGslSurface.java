@@ -21,8 +21,6 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 
 public class DIYGslSurface implements ApplicationListener,
 		AndroidWallpaperListener, GestureListener {
@@ -142,8 +140,8 @@ public class DIYGslSurface implements ApplicationListener,
 		reserveRessources();
 
 		// set the cursor somewhere else than @ 0,0
-		mouseCursorX = 0.5f;
-		mouseCursorY = 0.5f;
+		mouseCursorX = 0.2f;
+		mouseCursorY = 0.3f;
 	}
 
 	private void setupShader() {
