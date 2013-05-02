@@ -33,7 +33,8 @@
     <string name="unableAccessExtStorage">Unable to access external storage (SD)</string>
     <string name="cancel">Cancel</string>
     <string name="setAsLWP">Set as Wallpaper</string>
-    
-    
+    <string name="preferencesForLWP">Preferences for Wallpaper</string>
+    <string name="aPropos">About this app</string>
+    <string name="quit">Quit App</string>
 
 </resources>

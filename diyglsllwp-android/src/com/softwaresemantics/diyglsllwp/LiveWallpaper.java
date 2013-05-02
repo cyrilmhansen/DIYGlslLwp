@@ -6,21 +6,19 @@ package com.softwaresemantics.diyglsllwp;
 
 import java.io.File;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.service.wallpaper.WallpaperService.Engine;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.android.AndroidWallpaperListener;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidLiveWallpaperService;
 import com.badlogic.gdx.files.FileHandle;
-import com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask.UINotifier;
 
 public class LiveWallpaper extends AndroidLiveWallpaperService implements
 		SharedPreferences.OnSharedPreferenceChangeListener {
@@ -58,20 +56,17 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 		// .setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 		// Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 	}
-	
-	
 
-//	@Override
-//	public Engine onCreateEngine() {
-//		// hypothesis : equivalent to resume() ??
-//		return super.onCreateEngine();
-//		
-//	}
-
-
+	// @Override
+	// public Engine onCreateEngine() {
+	// // hypothesis : equivalent to resume() ??
+	// return super.onCreateEngine();
+	//
+	// }
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		super.onStartCommand(intent, flags, startId);
 
 		if (RELOAD_SHADER.equals(intent.getAction())) {
 			// update shader only
@@ -82,8 +77,7 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 			reloadAll();
 		}
 
-		return super.onStartCommand(intent, flags, startId);
-
+		return Service.START_NOT_STICKY;
 	}
 
 	private void reloadAll() {

@@ -33,5 +33,10 @@
     <string name="unableAccessExtStorage">Accès impossible au stockage externe (carte SD)</string>
     <string name="cancel">Annuler</string>
     <string name="setAsLWP">Choisir comme fond d\'écran</string>
+    
+    <string name="preferencesForLWP">Préférences du fond d\'écran</string>
+    <string name="aPropos">A propos de cette application</string>
+    <string name="quit">Quitter</string>
+    
 
 </resources>

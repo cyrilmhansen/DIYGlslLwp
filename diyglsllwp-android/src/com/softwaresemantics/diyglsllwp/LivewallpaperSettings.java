@@ -15,24 +15,15 @@ public class LivewallpaperSettings extends PreferenceActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.pref_ad);
 		addPreferencesFromResource(R.xml.prefs);
-
-		// Preference touchPref =
-		// getPreferenceManager().findPreference("touch");
-		//
-		// Preference reducedResolutionPref = getPreferenceManager()
-		// .findPreference("reducedResolution");
-		//
-		// Preference resolutionFactorPref = getPreferenceManager()
-		// .findPreference("reductionFactor");
 	}
 
 	@Override
 	public boolean onPreferenceChange(Preference arg0, Object arg1) {
 		Log.d("LivewallpaperSettings", arg0.getKey() + " -> " + arg1.toString());
 
-		// TODO Live update of LWP ?
-
+		// TODO Live update of LWP ? How ?
 		return true;
 	}
 

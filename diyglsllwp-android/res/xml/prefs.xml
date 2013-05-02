@@ -11,7 +11,7 @@
         android:title="@string/enableTouch" >
     </CheckBoxPreference>
     <CheckBoxPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="displayFPSLWP"
         android:title="@string/displayFPSLWP" >
     </CheckBoxPreference>

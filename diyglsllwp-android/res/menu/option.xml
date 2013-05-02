@@ -6,29 +6,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/option"
+        android:id="@+id/prefsLWP"
         android:icon="@android:drawable/ic_menu_preferences"
-        android:title="Options">
-        <menu android:id="@+id/sousmenu" >
-            <item
-                android:id="@+id/favoris"
-                android:title="Favoris"/>
-            <item
-                android:id="@+id/stats"
-                android:title="Stats"/>
-        </menu>
+        android:title="@string/preferencesForLWP">
     </item>
-    
     <item
         android:id="@+id/goToShader"
         android:title="@string/moveToShader"/>
-    
     <item
         android:id="@+id/goToPage"
         android:title="@string/moveToPage"/>
     <item
+        android:id="@+id/aPropos"
+        android:title="@string/aPropos"/>
+    <item
         android:id="@+id/quit"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
-        android:title="Quit"/>
+        android:title="@string/quit"/>
 
 </menu>

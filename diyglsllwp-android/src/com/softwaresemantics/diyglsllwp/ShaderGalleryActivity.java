@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
@@ -31,6 +32,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -68,6 +70,8 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 
 public class ShaderGalleryActivity extends AndroidApplication implements
 		ScreenshotProcessor, ClickHandler {
+
+	private static final String COM_SOFTWARESEMANTICS_DIYGLSLLWP_PREFS_LWP = "com.softwaresemantics.diyglsllwp.LivewallpaperSettings";
 
 	static final String DIY_GLSL_LWP_DIR_NAME = "DiyGlslLwp";
 
@@ -152,6 +156,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		}
 	}
 
+	@SuppressLint("NewApi")
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 
@@ -168,8 +173,21 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 					.getString(CURRENT_FRAG_SHADER_PROGRAM);
 		}
 
-		// Save space on phones
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// Option menu must be accessible, either by key or action bar
+		// API level 14
+		try {
+			if (!ViewConfiguration.get(this).hasPermanentMenuKey()) {
+				// Ensure action bar is visible
+				getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+				// getActionBar().hide();
+			} else {
+				requestWindowFeature(Window.FEATURE_NO_TITLE);
+			}
+		} catch (Exception ex) {
+			// API < 14
+			// Option key is required on this system
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+		}
 
 		// Try to to keep the UI fluid
 		// android.os.Process
@@ -202,12 +220,8 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 				new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-
-						// Toast.makeText(ShaderGalleryActivity.this,
-						// "Processing next page", Toast.LENGTH_SHORT)
-						// .show();
 						// TODO What if we are at the last page ??
-						// FIXME CRASH
+						// FIXME Theoric CRASH
 						askedPageIndex = currentPageIndex + 1;
 						cancelSelectionIfAny();
 						updateGallery();
@@ -232,10 +246,14 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 		progressDialog = new ProgressDialog(this);
 		updateStatusLabel(getResources().getString(R.string.loadingStatus));
+
 	}
 
 	public void updateStatusLabel(String alternateLabel) {
 		TextView statusTextView = (TextView) findViewById(R.id.statusLabel);
+		if (statusTextView == null) {
+			Log.e("diyglsllwp", "updateStatusLabel statusLabel elt missing");
+		}
 		if (alternateLabel != null) {
 			statusTextView.setText(alternateLabel);
 		} else {
@@ -256,8 +274,6 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Menu action dispatch
 		switch (item.getItemId()) {
-		// TODO Access wall paper settings
-		// TODO Implement other menu options
 
 		case R.id.goToShader:
 			DialogUtils.inputDialog(this,
@@ -305,18 +321,14 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 			return true;
 
-			// case R.id.option:
-			// Toast.makeText(ShaderGalleryActivity.this, "options",
-			// Toast.LENGTH_SHORT).show();
-			// return true;
-			// case R.id.favoris:
-			// Toast.makeText(ShaderGalleryActivity.this, "favoris",
-			// Toast.LENGTH_SHORT).show();
-			// return true;
-			// case R.id.stats:
-			// Toast.makeText(ShaderGalleryActivity.this, "stats",
-			// Toast.LENGTH_SHORT).show();
-			// return true;
+		case R.id.prefsLWP:
+			startPrefsLwpActivity();
+			return true;
+
+		case R.id.aPropos:
+			showAproposDialog();
+			return true;
+
 		case R.id.quit:
 			Toast.makeText(ShaderGalleryActivity.this,
 					getResources().getString(R.string.exiting),
@@ -325,6 +337,18 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 			return true;
 		}
 		return false;
+	}
+
+	private void showAproposDialog() {
+		AboutDialog about = new AboutDialog(this);
+		about.setTitle(getResources().getString(R.string.aPropos));
+		about.show();
+	}
+
+	private void startPrefsLwpActivity() {
+		Intent intent = new Intent(this, LivewallpaperSettings.class);
+		intent.setAction(COM_SOFTWARESEMANTICS_DIYGLSLLWP_PREFS_LWP);
+		startActivityForResult(intent, REQUEST_SET_LIVE_WALLPAPER);
 	}
 
 	private void updateGallery() {
@@ -368,6 +392,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 	 * Do what we can to help the user active the builtin Live Wallpaper Code
 	 * from stackoverflow...
 	 */
+	@SuppressLint("InlinedApi")
 	public void setOwnLWP() {
 		Intent intent;
 
@@ -913,7 +938,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		}
 
 		public void run() {
-			this.parentActivity.setupFullScreenView();
+			this.parentActivity.goToFullViewIfPossible();
 			;
 		}
 	}
