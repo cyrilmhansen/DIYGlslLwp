@@ -37,8 +37,12 @@
     <string name="setAsLWP">Choisir comme fond d\'écran</string>
     
     <string name="preferencesForLWP">Préférences du fond d\'écran</string>
-    <string name="aPropos">A propos de cette application</string>
+    <string name="aPropos">A propos de</string>
     <string name="quit">Quitter</string>
+    
+    <string name="ok">OK</string>
+    
+    
     
 
 </resources>

@@ -23,7 +23,7 @@ public class DialogUtils {
 			boolean digitsOnly, final InputDialogCallback callback) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
-		alert.setTitle("Title");
+		alert.setTitle(context.getResources().getString(R.string.app_name));
 		alert.setMessage(message);
 
 		// Set an EditText view to get user input
@@ -33,14 +33,14 @@ public class DialogUtils {
 			input.setKeyListener(DigitsKeyListener.getInstance());
 		}
 
-		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton(context.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = input.getText().toString();
 				callback.inputValue(value);
 			}
 		});
 
-		alert.setNegativeButton("Cancel",
+		alert.setNegativeButton(context.getResources().getString(R.string.cancel),
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						// do nothing

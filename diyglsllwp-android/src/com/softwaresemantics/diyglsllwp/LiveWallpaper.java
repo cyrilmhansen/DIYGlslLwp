@@ -8,6 +8,10 @@ package com.softwaresemantics.diyglsllwp;
 
 import java.io.File;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -19,6 +23,8 @@ import com.badlogic.gdx.files.FileHandle;
 
 public class LiveWallpaper extends AndroidLiveWallpaperService implements
 		SharedPreferences.OnSharedPreferenceChangeListener {
+
+	private static final String RELOAD_SHADER = "RELOAD_SHADER";
 
 	private AndroidApplicationConfiguration config;
 	private String shaderGLSL = null;
@@ -86,17 +92,32 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 	// handler for shader change
 	protected void reloadShader() {
 		// Check if custom shader is defined
-		File customShader = ShaderStorage.getCustomShaderLWPFile(this);
-		if (customShader != null) {
-			Log.d("lwp", "reloadShader");
-			shaderGLSL = (new FileHandle(customShader)).readString();
-		} else {
-			Log.d("lwp", "reloadShader error");
+		try {
+			File customShader = ShaderStorage.getCustomShaderLWPFile(this);
+			if (customShader != null) {
+				Log.d("lwp", "reloadShader");
+				shaderGLSL = (new FileHandle(customShader)).readString();
+			} else {
+				Log.d("lwp", "reloadShader error");
+			}
+
+			if (listener != null && shaderGLSL != null) {
+				listener.updateShader(shaderGLSL);
+			}
+		} catch (Exception ex) {
+			Log.e("DiyGlslLWP", "reloadShader", ex);
+		}
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+
+		if (RELOAD_SHADER.equals(intent.getAction())) {
+			// update shader only
+			reloadShaderIfNeeded();
 		}
 
-		if (listener != null) {
-			listener.updateShader(shaderGLSL);
-		}
+		return super.onStartCommand(intent, flags, startId);
 	}
 
 	public static void reloadShaderIfNeeded() {
@@ -107,7 +128,7 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 
 	protected void notifyCfgChange() {
 
-		Log.d("lwp", "notifyCfgChange", new Exception());
+		// Log.d("lwp", "notifyCfgChange", new Exception());
 
 		if (listener != null) {
 			listener.updatePrefs(prefs.isReductionFactorEnabled(),
@@ -118,13 +139,9 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 
 	}
 
-	public static void wakeUpNotify() {
-		if (instance != null) {
-			instance.notifyCfgChange();
-			instance.reloadShader();
-		}
-
-	}
+//	public static void wakeUpNotify() {
+//		reloadShaderIfNeeded();
+//	}
 
 	// implement AndroidWallpaperListener additionally to ApplicationListener
 	// if you want to receive callbacks specific to live wallpapers
@@ -136,6 +153,7 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 				int yPixelOffset) {
 
 			// TODO Manage offset (screen changes)
+			// this need shader support
 
 		}
 
@@ -143,6 +161,7 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 		public void previewStateChange(boolean isPreview) {
 			// Not sure of what this means
 			Log.d("lwp", "previewStateChange " + isPreview, new Exception());
+			reloadShader();
 		}
 	}
 
@@ -151,7 +170,40 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 			String key) {
 		// Called repeatedly for each preference item
 		// changes should be queued until redisplay
+		// wakeUpNotify();
+		//reloadShader();
 		notifyCfgChange();
+	}
+	
+	
+	
+
+	protected static void notifyShaderChange(Context ctx) {
+		// LWP is running in a seperate thread
+		// the notification uses ComponentName startService (Intent service)
+
+		// First check that the service is running
+		if (isLWPRunning(ctx)) {
+			Intent intent = new Intent(ctx.getApplicationContext(),
+					LiveWallpaper.class);
+			intent.setAction(RELOAD_SHADER);
+			// intent.set
+			ctx.startService(intent);
+			// instance.reloadShaderAndInitGDX();
+		}
+	}
+
+	private static boolean isLWPRunning(Context ctx) {
+		ActivityManager manager = (ActivityManager) ctx
+				.getSystemService(Context.ACTIVITY_SERVICE);
+		for (RunningServiceInfo service : manager
+				.getRunningServices(Integer.MAX_VALUE)) {
+			if (LiveWallpaper.class.getName().equals(
+					service.service.getClassName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

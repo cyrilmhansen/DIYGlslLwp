@@ -27,6 +27,8 @@ import com.badlogic.gdx.math.Vector2;
 public class DIYGslSurface implements ApplicationListener,
 		AndroidWallpaperListener, GestureListener {
 
+	private static final String OPEN_GL_ES_2_0_REQUIRED = "OpenGL ES 2.0 required";
+
 	private static final String ATTR_POSITION = "attr_Position";
 
 	private static final String ERROR_LOADING_SHADER = "Error loading shader";
@@ -207,9 +209,7 @@ public class DIYGslSurface implements ApplicationListener,
 			Gdx.app.log("DIYGslSurface", "isGL20Available returns false");
 
 			// Gdx.app.exit()
-			batch.begin();
-			font.draw(batch, "OpenGL ES 2.0 required", 50, 50);
-			batch.end();
+			displayErrorMsg();
 			return;
 		}
 
@@ -302,6 +302,12 @@ public class DIYGslSurface implements ApplicationListener,
 
 	}
 
+	private void displayErrorMsg() {
+		batch.begin();
+		font.draw(batch, OPEN_GL_ES_2_0_REQUIRED, 50, 50);
+		batch.end();
+	}
+
 	private boolean handleErrorAndSlowHardware() {
 		// If rendering is too slow, display an error
 		if (Gdx.graphics.getDeltaTime() > 5
@@ -316,9 +322,10 @@ public class DIYGslSurface implements ApplicationListener,
 				// TODO I18N
 				errorMsg = ERROR_LOADING_SHADER;
 			}
-
-			// FIXME : Not tested ! May crash
+			// TODO test again
+			batch.begin();
 			font.draw(batch, errorMsg, 50, 50);
+			batch.end();
 
 			return true;
 		}
@@ -459,15 +466,16 @@ public class DIYGslSurface implements ApplicationListener,
 	 * handler for android resume event
 	 */
 	public void resume() {
-		try {
-			Thread.sleep(500);
-		} catch (Exception ex) {
-			Gdx.app.log("resume", "resume/delay", ex);
-		}
+//		try {
+//			Thread.sleep(500);
+//		} catch (Exception ex) {
+//			Gdx.app.log("resume", "resume/delay", ex);
+//		}
 		// ou reporter au premier render ?
 
 		// Force recreation of buffers
 		m_fbo = null;
+	
 
 		reserveRessources();
 	}
@@ -475,6 +483,10 @@ public class DIYGslSurface implements ApplicationListener,
 	private void reserveRessources() {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
+		
+		// Callback pour forcer le rechargement du shader
+		setupShader();
+		
 
 		if (m_fboEnabled) {
 			initRenderFramebufferIfNeeded();

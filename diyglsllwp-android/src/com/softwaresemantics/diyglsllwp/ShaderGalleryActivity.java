@@ -65,6 +65,8 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 public class ShaderGalleryActivity extends AndroidApplication implements
 		ScreenshotProcessor, ClickHandler {
 
+	private static final String HTTP_GLSL_HEROKU_COM_ITEM = "http://glsl.heroku.com/item/";
+
 	private static final String COM_SOFTWARESEMANTICS_DIYGLSLLWP_PREFS_LWP = "com.softwaresemantics.diyglsllwp.LivewallpaperSettings";
 
 	static final String DIY_GLSL_LWP_DIR_NAME = "DiyGlslLwp";
@@ -122,7 +124,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 			Toast.makeText(this,
 					getResources().getString(R.string.networkRequired),
 					Toast.LENGTH_LONG).show();
-			this.exit();
+			exit();
 		}
 	}
 
@@ -273,7 +275,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 								values[0].setBmp(null);
 								new InternetAsyncShaderTask(
 										ShaderGalleryActivity.this, 0)
-										.execute("http://glsl.heroku.com/item/"
+										.execute(HTTP_GLSL_HEROKU_COM_ITEM
 												+ value);
 							} catch (Exception ignored) {
 							}
@@ -291,6 +293,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 						public void inputValue(String value) {
 							try {
 								askedPageIndex = Integer.valueOf(value);
+								currentSelectedIndex = -1;
 								updateGallery(askedPageIndex);
 							} catch (Exception ignored) {
 							}
@@ -363,7 +366,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 		// shader download task that will call us back to update UI
 		new InternetAsyncShaderTask(this, position)
-				.execute("http://glsl.heroku.com/item/" + item.getRefId());
+				.execute(HTTP_GLSL_HEROKU_COM_ITEM + item.getRefId());
 	}
 
 	/**
@@ -479,6 +482,9 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		progressDialog.dismiss();
 
 		super.onPause();
+
+		// Force complete restart of gallery each time
+		exit();
 	}
 
 	/**

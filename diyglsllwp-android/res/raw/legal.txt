@@ -1,5 +1,7 @@
 Original author : Cyril M. Hansen - All rights reserved.
 <br>
+<b>https://github.com/cyrilmhansen/DIYGlslLwp</b>
+<br>
 Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
 <br>
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

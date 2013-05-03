@@ -28,7 +28,7 @@ public class MyBroadCastReceiver extends BroadcastReceiver {
 			// Toast.makeText(context, "screen ON",Toast.LENGTH_LONG).show();
 
 			// All ressources must be newly reallocated for performance reason
-			LiveWallpaper.wakeUpNotify();
+			//LiveWallpaper.wakeUpNotify();
 		}
 	}
 }
