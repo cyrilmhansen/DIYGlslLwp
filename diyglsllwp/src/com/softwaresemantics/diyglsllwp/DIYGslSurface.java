@@ -1,6 +1,8 @@
 /*******************************************************************************
  * Copyright Cyril M. Hansen 2013
  * Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+ * 
+ * https://github.com/cyrilmhansen/DIYGlslLwp
  ******************************************************************************/
 package com.softwaresemantics.diyglsllwp;
 
@@ -25,11 +27,21 @@ import com.badlogic.gdx.math.Vector2;
 public class DIYGslSurface implements ApplicationListener,
 		AndroidWallpaperListener, GestureListener {
 
+	private static final String ATTR_POSITION = "attr_Position";
+
+	private static final String ERROR_LOADING_SHADER = "Error loading shader";
+
+	private static final String HARDWARE_TOO_SLOW_FOR_SHADER = "Hardware too slow for shader";
+
+	private static final String DO_PROCESS_SCREEN_SHOT = "doProcessScreenShot";
+
+	private static final String NO_EXCEPTION_MSG = "no exception msg";
+
 	private String shaderProgram;
 
 	private ShaderProgram shader;
 
-	// Screen surface is drawn as a GDX mesh (mandatory)
+	// Screen surface is drawn as a GDX mesh
 	Mesh mesh;
 
 	// View and projection matrix managed with GDX ortho camera
@@ -90,6 +102,28 @@ public class DIYGslSurface implements ApplicationListener,
 
 	}
 
+	public void updatePrefs(boolean reductionFactorEnabled,
+			int reductionFactor, boolean touchEnabled, boolean displayFPSLWP,
+			boolean timeDither, int timeDitherFactor) {
+		this.m_fboEnabled = reductionFactorEnabled;
+		this.m_fboScaler = reductionFactor;
+
+		this.timeDithering = timeDither;
+		this.timeDitheringFactor = timeDitherFactor;
+
+		this.touchEnabled = touchEnabled;
+		this.showFPS = displayFPSLWP;
+
+		// Force re creation of framebuffer
+		this.m_fbo = null;
+	}
+
+	public void updateShader(String shaderGLSL) {
+		this.shaderProgram = shaderGLSL;
+
+		setupShader();
+	}
+
 	/**
 	 * Constructor with default params, custom shader
 	 * 
@@ -111,12 +145,8 @@ public class DIYGslSurface implements ApplicationListener,
 		// GL 20 Required
 		if (!Gdx.graphics.isGL20Available()) {
 			Gdx.app.log("DIYGslSurface", "isGL20Available returns false");
-			// Gdx.app.exit();
+			Gdx.app.exit();
 		}
-
-		// Ici attendre 1 secondes pour etre sur que les ressources gl soient
-		// libres ???
-		// plutot dans on Resume ???
 
 		Gdx.input.setInputProcessor(new GestureDetector(this));
 
@@ -134,6 +164,7 @@ public class DIYGslSurface implements ApplicationListener,
 		}
 
 		cam = new OrthographicCamera(1f, 1f);
+
 		mesh = genUnitRectangle();
 		mesh.getVertexAttribute(Usage.Position).alias = "a_position";
 
@@ -177,7 +208,7 @@ public class DIYGslSurface implements ApplicationListener,
 
 			// Gdx.app.exit()
 			batch.begin();
-			font.draw(batch, "sGL20Available returns false", 50, 50);
+			font.draw(batch, "OpenGL ES 2.0 required", 50, 50);
 			batch.end();
 			return;
 		}
@@ -220,7 +251,7 @@ public class DIYGslSurface implements ApplicationListener,
 			renderShaderonMesh();
 		} catch (Exception ex) {
 			String msg = ex.getMessage() != null ? ex.getMessage()
-					: "null exception msg";
+					: NO_EXCEPTION_MSG;
 			Gdx.app.log("GDX render", msg);
 		}
 
@@ -229,7 +260,7 @@ public class DIYGslSurface implements ApplicationListener,
 				m_fbo.end();
 			} catch (Exception ex) {
 				String msg = ex.getMessage() != null ? ex.getMessage()
-						: "null exception msg";
+						: NO_EXCEPTION_MSG;
 				Gdx.app.log("m_fbo render", msg);
 			}
 
@@ -243,7 +274,7 @@ public class DIYGslSurface implements ApplicationListener,
 
 			} catch (Exception ex) {
 				String msg = ex.getMessage() != null ? ex.getMessage()
-						: "null exception msg";
+						: NO_EXCEPTION_MSG;
 				Gdx.app.log("m_fbo scale", msg);
 			} finally {
 				batch.end();
@@ -257,8 +288,6 @@ public class DIYGslSurface implements ApplicationListener,
 			batch.end();
 		}
 
-		// }
-
 		// Process snapshot requests if any
 		// Proper gl context for this is only available in render() aka here
 
@@ -266,7 +295,7 @@ public class DIYGslSurface implements ApplicationListener,
 			try {
 				screenshotProc.doProcessScreenShot();
 			} catch (Exception ex) {
-				Gdx.app.log("do screen shot", ex.getLocalizedMessage());
+				Gdx.app.log(DO_PROCESS_SCREEN_SHOT, ex.getLocalizedMessage());
 			}
 			doscreenShotRequest = false;
 		}
@@ -278,14 +307,14 @@ public class DIYGslSurface implements ApplicationListener,
 		if (Gdx.graphics.getDeltaTime() > 5
 				&& Gdx.graphics.getFramesPerSecond() < 2) {
 			shader = null;
-			errorMsg = "Hardware too slow for shader";
+			errorMsg = HARDWARE_TOO_SLOW_FOR_SHADER;
 		}
 
 		// If missing shader, display error
 		if (shader == null) {
 			if (errorMsg == null) {
-				// FIXME I18N
-				errorMsg = "Error loading shader";
+				// TODO I18N
+				errorMsg = ERROR_LOADING_SHADER;
 			}
 
 			// FIXME : Not tested ! May crash
@@ -304,9 +333,7 @@ public class DIYGslSurface implements ApplicationListener,
 	}
 
 	private void forceNewRenderBuffer() {
-		// Use RGBA8888 to allow the use of a bitmap beneath and transparency
-		// later
-		// For now, waste of precious gpu ressources... ???
+		// No alpha channel needed
 		m_fbo = new FrameBuffer(Format.RGB888,
 				(int) (effectiveSurfaceWidth / m_fboScaler),
 				(int) (effectiveSurfaceHeight / m_fboScaler), false);
@@ -344,7 +371,8 @@ public class DIYGslSurface implements ApplicationListener,
 
 		shader.setUniformf("time", time);
 
-		// TODO : mouse cursor position should be virtualized
+		// TODO : mouse cursor position should be virtualized / setup as user
+		// function parameter
 		shader.setUniformf("mouse", mouseCursorX, mouseCursorY);
 
 		// real thing
@@ -366,7 +394,7 @@ public class DIYGslSurface implements ApplicationListener,
 		float y2 = 0.5f;
 
 		Mesh mesh = new Mesh(true, 4, 6, new VertexAttribute(Usage.Position, 3,
-				"attr_Position"));
+				ATTR_POSITION));
 
 		mesh.setVertices(new float[] { x1, y1, 0, x2, y1, -0, x2, y2, -0, x1,
 				y2, 0 });
@@ -376,21 +404,26 @@ public class DIYGslSurface implements ApplicationListener,
 	}
 
 	static class HerokuSampleShader extends CustomShader {
+		private static final String DATA_SHADERS_HEROKUWIGGLE1_FRAG = "data/shaders/herokuwiggle1.frag";
+
 		public HerokuSampleShader() {
-			super(Gdx.files.internal("data/shaders/herokuwiggle1.frag")
+			super(Gdx.files.internal(DATA_SHADERS_HEROKUWIGGLE1_FRAG)
 					.readString());
 		}
 	}
 
 	private static class CustomShader extends ShaderProgram {
+		private static final String SHADER_COMPILATION_FAILED = "Shader compilation failed:\n";
+		private static final String DATA_SHADERS_HEROKUBASE_VERT = "data/shaders/herokubase.vert";
+
 		public CustomShader(String customFragShader) {
 
-			super(Gdx.files.internal("data/shaders/herokubase.vert")
-					.readString(), customFragShader);
+			super(
+					Gdx.files.internal(DATA_SHADERS_HEROKUBASE_VERT)
+							.readString(), customFragShader);
 
 			if (!isCompiled()) {
-				throw new RuntimeException("Shader compilation failed:\n"
-						+ getLog());
+				throw new RuntimeException(SHADER_COMPILATION_FAILED + getLog());
 			}
 		}
 
@@ -449,11 +482,6 @@ public class DIYGslSurface implements ApplicationListener,
 	}
 
 	// handler for ???
-	public void offsetChange(float xOffset, float yOffset, float xOffsetStep,
-			float yOffsetStep, int xPixelOffset, int yPixelOffset) {
-	}
-
-	// handler for ???
 	public void previewStateChange(boolean isPreview) {
 	}
 
@@ -462,7 +490,7 @@ public class DIYGslSurface implements ApplicationListener,
 	 */
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		if (listener != null) {
-			listener.onClick((int) x, (int)y);
+			listener.onClick((int) x, (int) y);
 		}
 		if (touchEnabled) {
 			// update mouse cursor pos
@@ -560,4 +588,15 @@ public class DIYGslSurface implements ApplicationListener,
 
 	}
 
+	@Override
+	public void offsetChange(float xOffset, float yOffset, float xOffsetStep,
+			float yOffsetStep, int xPixelOffset, int yPixelOffset) {
+
+		// Translation management need fragment shader support
+		// By default shader uses screen coordinates, which are fixed.
+
+		// offset can be provided as a custom attribute, but the shader must use
+		// it.
+
+	}
 }

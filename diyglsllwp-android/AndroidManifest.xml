@@ -2,6 +2,8 @@
 <!--
   Copyright Cyril M. Hansen 2013
   Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+  
+  https://github.com/cyrilmhansen/DIYGlslLwp
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.softwaresemantics.diyglsllwp"
@@ -70,9 +72,17 @@
                 <category android:name="android.intent.category.PREFERENCE" />
             </intent-filter>
         </activity>
+        
         <activity
             android:name="com.google.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+
+        <receiver android:name=".MyBroadCastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_OFF" />
+                <action android:name="android.intent.action.SCREEN_ON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

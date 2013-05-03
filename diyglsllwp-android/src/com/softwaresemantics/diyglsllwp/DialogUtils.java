@@ -1,3 +1,9 @@
+/*******************************************************************************
+ * Copyright Cyril M. Hansen 2013
+ * Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+ * 
+ * https://github.com/cyrilmhansen/DIYGlslLwp
+ ******************************************************************************/
 package com.softwaresemantics.diyglsllwp;
 
 import android.app.AlertDialog;
@@ -6,9 +12,15 @@ import android.content.DialogInterface;
 import android.text.method.DigitsKeyListener;
 import android.widget.EditText;
 
+/**
+ * 
+ * @author cmh
+ * 
+ */
 public class DialogUtils {
-	public static void inputDialog(Context context, String message, boolean digitsOnly,
-			final InputDialogCallback callback) {
+
+	public static void inputDialog(Context context, String message,
+			boolean digitsOnly, final InputDialogCallback callback) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
 		alert.setTitle("Title");

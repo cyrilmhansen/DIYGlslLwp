@@ -1,11 +1,14 @@
 /*******************************************************************************
  * Copyright Cyril M. Hansen 2013
  * Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+ * 
+ * https://github.com/cyrilmhansen/DIYGlslLwp
  ******************************************************************************/
 package com.softwaresemantics.diyglsllwp;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -27,17 +30,39 @@ public class AlmostFSResStrategy implements ResolutionStrategy {
 	}
 
 	@Override
-	public MeasuredDimension calcMeasures(int arg0, int arg1) {
+	public MeasuredDimension calcMeasures(int ignored0, int ignored1) {
+
+		// Effective window dimensions strategy from
+		// https://code.google.com/p/enh/
 
 		WindowManager wm = (WindowManager) context
 				.getSystemService(Context.WINDOW_SERVICE);
+		Display d = wm.getDefaultDisplay();
+		DisplayMetrics metrics = new DisplayMetrics();
+		d.getMetrics(metrics);
+		// since SDK_INT = 1;
+		int widthPixels = metrics.widthPixels;
+		int heightPixels = metrics.heightPixels;
+		try {
+			// used when 17 > SDK_INT >= 14; includes window decorations
+			// (statusbar bar/menu bar)
+			widthPixels = (Integer) Display.class.getMethod("getRawWidth")
+					.invoke(d);
+			heightPixels = (Integer) Display.class.getMethod("getRawHeight")
+					.invoke(d);
+		} catch (Exception ignored) {
+		}
+		try {
+			// used when SDK_INT >= 17; includes window decorations (statusbar
+			// bar/menu bar)
+			Point realSize = new Point();
+			Display.class.getMethod("getRealSize", Point.class).invoke(d,
+					realSize);
+			widthPixels = realSize.x;
+			heightPixels = realSize.y;
+		} catch (Exception ignored) {
+		}
 
-		Display display = wm.getDefaultDisplay();
-		Point size = new Point();
-		display.getSize(size);
-		int width = size.x;
-		int height = size.y;
-
-		return new MeasuredDimension(width, height - reservedHeight);
+		return new MeasuredDimension(widthPixels, heightPixels - reservedHeight);
 	}
 }

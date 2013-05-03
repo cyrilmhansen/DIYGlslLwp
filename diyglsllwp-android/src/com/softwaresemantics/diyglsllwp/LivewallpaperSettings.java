@@ -1,6 +1,8 @@
 /*******************************************************************************
  * Copyright Cyril M. Hansen 2013
  * Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+ * 
+ * https://github.com/cyrilmhansen/DIYGlslLwp
  ******************************************************************************/
 package com.softwaresemantics.diyglsllwp;
 
@@ -21,9 +23,7 @@ public class LivewallpaperSettings extends PreferenceActivity implements
 
 	@Override
 	public boolean onPreferenceChange(Preference arg0, Object arg1) {
-		Log.d("LivewallpaperSettings", arg0.getKey() + " -> " + arg1.toString());
-
-		// TODO Live update of LWP ? How ?
+		// All changes are validated
 		return true;
 	}
 

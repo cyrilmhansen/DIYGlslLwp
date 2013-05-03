@@ -1,3 +1,10 @@
+#-------------------------------------------------------------------------------
+# Copyright Cyril M. Hansen 2013
+# Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+# 
+# https://github.com/cyrilmhansen/DIYGlslLwp
+#-------------------------------------------------------------------------------
 <h3>Do It Yourself GLSL<br> LiveWallPaper And Gallery</h3>
 Version 1.0<br>
 Copyright 2013<br>
+<b>https://github.com/cyrilmhansen/DIYGlslLwp</b>

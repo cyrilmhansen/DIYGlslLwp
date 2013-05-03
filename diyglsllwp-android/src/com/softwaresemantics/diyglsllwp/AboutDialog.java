@@ -1,3 +1,9 @@
+/*******************************************************************************
+ * Copyright Cyril M. Hansen 2013
+ * Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+ * 
+ * https://github.com/cyrilmhansen/DIYGlslLwp
+ ******************************************************************************/
 package com.softwaresemantics.diyglsllwp;
 
 import java.io.BufferedReader;
@@ -16,9 +22,8 @@ import android.widget.TextView;
 
 /**
  * 
- * @author 
- *         http://www.techrepublic.com/blog/app-builder/a-reusable-about-dialog-for
- *         -your-android-apps/504
+ * from http://www.techrepublic.com/blog/app-builder/a-reusable-about-dialog-for
+ * -your-android-apps/504
  * 
  */
 public class AboutDialog extends Dialog {
@@ -38,7 +43,7 @@ public class AboutDialog extends Dialog {
 	public void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.about);
 		TextView tv = (TextView) findViewById(R.id.legal_text);
-		tv.setText(readRawTextFile(R.raw.legal));
+		tv.setText(Html.fromHtml(readRawTextFile(R.raw.legal)));
 		tv = (TextView) findViewById(R.id.info_text);
 		tv.setText(Html.fromHtml(readRawTextFile(R.raw.info)));
 		tv.setLinkTextColor(Color.WHITE);
@@ -46,12 +51,11 @@ public class AboutDialog extends Dialog {
 
 		setCanceledOnTouchOutside(true);
 	}
-	
-	public boolean dispatchTouchEvent(MotionEvent event)  
-    {
-        dismiss();
-        return false;
-    }
+
+	public boolean dispatchTouchEvent(MotionEvent event) {
+		dismiss();
+		return false;
+	}
 
 	public static String readRawTextFile(int id) {
 		InputStream inputStream = mContext.getResources().openRawResource(id);

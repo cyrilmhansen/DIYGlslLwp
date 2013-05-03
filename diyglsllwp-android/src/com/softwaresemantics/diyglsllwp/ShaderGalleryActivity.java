@@ -1,6 +1,8 @@
 /*******************************************************************************
  * Copyright Cyril M. Hansen 2013
  * Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+ * 
+ * https://github.com/cyrilmhansen/DIYGlslLwp
  ******************************************************************************/
 package com.softwaresemantics.diyglsllwp;
 
@@ -51,20 +53,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 
-// TODO : Message de rechargement au service LWP lorsque l'on selectionne un autre shader pour le fond d'ecran
-// Focus sur selection apres clic initial sur liste principale
-// Parametres de performance
-// crashs
-// le deploiement du package plante le JYG3 si le fond d'ecran est actif
-
 /**
  * Main activity / view
  * 
  * 
- * TODO : improve the data model management
- * 
- * simple cache between gallery page resize image to smaller size to improve
- * memory footprint
+ * TODO : improve data model management, add simple cache between gallery page
+ * resize image to smaller size to improve memory footprint
  * 
  */
 
@@ -80,7 +74,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 	private static final int _200_PX = 200;
 
 	// TODO : dynamic layout
-	private static final int FS_BUTTON_HEIGHT = 100;
+	private static final int FS_BUTTON_HEIGHT = 150;
 
 	private static final int REQUEST_SET_LIVE_WALLPAPER = 101;
 
@@ -134,16 +128,9 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 
 		checkIfOnlineOrExit();
-
-		// if (!Gdx.graphics.isGL20Available()) {
-		// Toast.makeText(ShaderGalleryActivity.this,
-		// "Open GL ES 2.0 Required", Toast.LENGTH_LONG).show();
-		// finish();
-		// }
 
 		if (askedPageIndex != currentPageIndex) {
 			// gallery page needs to be downloaded
@@ -283,23 +270,16 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 						@Override
 						public void inputValue(String value) {
 							try {
-								// Change first list item ?
-								// update current code and go to full screen
-								// view ??
-								// TODO Use specific icon as visual hint for the
-								// first line
 								values[0].setBmp(null);
 								new InternetAsyncShaderTask(
 										ShaderGalleryActivity.this, 0)
 										.execute("http://glsl.heroku.com/item/"
 												+ value);
-							} catch (Exception ex) {
-								// nothing to do
+							} catch (Exception ignored) {
 							}
 
 						}
 					});
-
 			return true;
 
 		case R.id.goToPage:
@@ -312,13 +292,11 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 							try {
 								askedPageIndex = Integer.valueOf(value);
 								updateGallery(askedPageIndex);
-							} catch (Exception ex) {
-								// nothing to do
+							} catch (Exception ignored) {
 							}
 
 						}
 					});
-
 			return true;
 
 		case R.id.prefsLWP:
@@ -360,14 +338,14 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 			Toast.makeText(this,
 					getResources().getString(R.string.networkRequired),
 					Toast.LENGTH_LONG).show();
-			// ?? call finish();
+			// call finish(); ??
 		} else {
 			progressDialog.setMessage(getResources().getString(
 					R.string.loadingGalleryPage)
 					+ pageIndex);
 			progressDialog.show();
 
-			// differed loading of gallery
+			// defered loading of gallery
 			new InternetAsyncGalleryTask(this, pageIndex)
 					.execute("http://glsl.heroku.com/?page=" + pageIndex);
 		}
@@ -672,7 +650,8 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		File lwp = saveCurrentSelectedShader(
 				ShaderStorage.getDiyGlslLwpShaderDir(this), ShaderStorage.LWP);
 
-		LiveWallpaper.notifyShaderChange(this);
+		LiveWallpaper.reloadShaderIfNeeded();
+
 		return lwp;
 	}
 
@@ -713,14 +692,10 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		Uri uri = Uri.fromFile(tmpglsltxt);
 		intent.setDataAndType(uri, "text/plain");
 
-		// TODO : Add parameter for content type :
-		// ex : application/x-glsl
-		// text/x-glsl-es-frag
-		// text/x-glsl-frag
+		// TODO : try to improve encoding handling
+		// TODO : Add live editing of fragment shader
 
 		startActivity(intent);
-
-		// todo how to specify encoding in intent ??
 	}
 
 	private void cancelSelectionIfAny() {
@@ -826,9 +801,10 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
 		cfg.useGL20 = true;
 
-		// TODO more dynamic layout
+		// TODO more dynamic layout for this screen
 		cfg.resolutionStrategy = new AlmostFSResStrategy(this,
-				2 * FS_BUTTON_HEIGHT);
+				(int) (2 * FS_BUTTON_HEIGHT * getResources()
+						.getDisplayMetrics().density));
 
 		mySurface = new DIYGslSurface(currentFragShaderProgram,
 				prefs.isReductionFactorEnabled(), prefs.getReductionFactor(),

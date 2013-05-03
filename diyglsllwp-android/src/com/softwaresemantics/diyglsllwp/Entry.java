@@ -1,6 +1,8 @@
 /*******************************************************************************
  * Copyright Cyril M. Hansen 2013
  * Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+ * 
+ * https://github.com/cyrilmhansen/DIYGlslLwp
  ******************************************************************************/
 package com.softwaresemantics.diyglsllwp;
 
@@ -8,6 +10,7 @@ import android.graphics.Bitmap;
 
 public class Entry {
 
+	private static final String WAITING_FOR_DOWNLOAD = "waiting for download";
 	private String refId;
 	private Bitmap bmp;
 
@@ -17,7 +20,7 @@ public class Entry {
 
 	public Entry(String refId) {
 		this.refId = refId;
-		this.description = "waiting for download";
+		this.description = WAITING_FOR_DOWNLOAD;
 	}
 
 	public String getRefId() {
