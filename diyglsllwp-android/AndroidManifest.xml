@@ -13,7 +13,7 @@
     <uses-feature android:name="android.software.live_wallpaper" />
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="10"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
