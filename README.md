@@ -11,4 +11,7 @@ The app consists of two part :
 The gallery view can be used to preview the shader before selecting and saving its code to the SD.
 The live wallpaper part has some settings allowing to trade quality for performance.
 
-This is an initial version written as a first GDX / Open GL App. Expect instability.
+This is an initial version written as a first GDX / Open GL App. Peformance and compatibilty depends on your device.
+
+APK published in Google Play and @ http://code.google.com/p/diyglsllwp-android/downloads/list .
+
