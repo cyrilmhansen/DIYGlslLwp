@@ -35,14 +35,10 @@
     <string name="unableAccessExtStorage">Accès impossible au stockage externe (carte SD)</string>
     <string name="cancel">Annuler</string>
     <string name="setAsLWP">Choisir comme fond d\'écran</string>
-    
     <string name="preferencesForLWP">Préférences du fond d\'écran</string>
     <string name="aPropos">A propos de</string>
     <string name="quit">Quitter</string>
-    
     <string name="ok">OK</string>
-    
-    
-    
+    <string name="openGLRequirementsFailure">OpenGL 2 ES requis</string>
 
 </resources>

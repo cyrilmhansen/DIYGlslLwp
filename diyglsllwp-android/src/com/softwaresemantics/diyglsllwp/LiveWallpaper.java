@@ -22,10 +22,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.badlogic.gdx.android.AndroidWallpaperListener;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidLiveWallpaperService;
+import com.badlogic.gdx.backends.android.CustomAndroidGDXApp;
 import com.badlogic.gdx.files.FileHandle;
 
 public class LiveWallpaper extends AndroidLiveWallpaperService implements
@@ -39,7 +41,8 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 	private DIYGslSurface listener;
 	private LiveWallpaperPrefs prefs;
 
-	private static LiveWallpaper instance;
+	static LiveWallpaper instance;
+	static ShaderGalleryActivity galleryAppInstance;
 
 	public void onCreateApplication() {
 		super.onCreateApplication();
@@ -70,11 +73,34 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 	}
 
 	protected void initGDX() {
-		Log.d("lwp", "initGDX");
-		if (listener != null) {
-			Log.d("lwp", "listener dispose");
-			listener.dispose();
+
+		if (galleryAppInstance != null) {
+			// Second activity (ie Livewallpaper is active and running)
+			// dispose ressources
+
+			Toast.makeText(this, "switch gallery -> LWP", Toast.LENGTH_LONG)
+					.show();
+
+			galleryAppInstance.mySurface.dispose();
+			galleryAppInstance.getGraphics().clearManagedCaches();
+			// galleryAppInstance.destroyGraphics();
+
+			// Change lifecycle to recreate surface on resume
+
+			// if (getGraphicsView() instanceof GLSurfaceViewCupcake)
+			// ((GLSurfaceViewCupcake) getGraphicsView()).onPause();
+			// if (getGraphicsView() instanceof android.opengl.GLSurfaceView)
+			// ((android.opengl.GLSurfaceView) getGraphicsView()).onPause();
+
+			// Maybe we should wait and dot the rest of the init in the first
+			// render call.. ??
 		}
+
+		// Log.d("lwp", "initGDX");
+		// if (listener != null) {
+		// Log.d("lwp", "listener dispose");
+		// listener.dispose();
+		// }
 
 		if (shaderGLSL != null) {
 			Log.d("lwp", "new DIYGslSurface");
@@ -93,6 +119,7 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 		config.useGL20 = true;
 
 		Log.d("lwp", "initGDX LWP initialize");
+
 		initialize(listener, config);
 	}
 
@@ -146,9 +173,9 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 
 	}
 
-//	public static void wakeUpNotify() {
-//		reloadShaderIfNeeded();
-//	}
+	// public static void wakeUpNotify() {
+	// reloadShaderIfNeeded();
+	// }
 
 	// implement AndroidWallpaperListener additionally to ApplicationListener
 	// if you want to receive callbacks specific to live wallpapers
@@ -178,12 +205,9 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 		// Called repeatedly for each preference item
 		// changes should be queued until redisplay
 		// wakeUpNotify();
-		//reloadShader();
+		// reloadShader();
 		notifyCfgChange();
 	}
-	
-	
-	
 
 	protected static void notifyShaderChange(Context ctx) {
 		// LWP is running in a seperate thread

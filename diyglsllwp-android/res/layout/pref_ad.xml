@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
-        ads:adUnitId="MY_AD_UNIT_ID"
+        ads:adUnitId="a1518d164a0ff43"
         ads:testDevices="TEST_EMULATOR, 0123456789ABCDEF, 20080411" >
 
         <!-- myapp:backgroundColor="#000000" -->
