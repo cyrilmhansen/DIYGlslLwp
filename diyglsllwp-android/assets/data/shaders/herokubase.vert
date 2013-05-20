@@ -2,10 +2,10 @@
 precision mediump float;
 #endif
 
-attribute vec4 a_position;
-uniform mat4 u_mvpMatrix;
+attribute vec3 a_position;
+attribute vec2 a_texCoord0;
 
 void main()
 {
-    gl_Position = a_position * u_mvpMatrix;
+	 gl_Position = vec4(a_position, 1.0 );
 } 

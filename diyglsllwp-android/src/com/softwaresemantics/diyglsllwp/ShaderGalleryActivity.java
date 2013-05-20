@@ -55,6 +55,9 @@ import android.widget.Toast;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.gdx.backends.android.AndroidGraphics;
+import com.badlogic.gdx.backends.android.CustomAndroidGDXApp;
+import com.badlogic.gdx.backends.android.surfaceview.GLSurfaceViewCupcake;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -69,8 +72,8 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
  * 
  */
 
-public class ShaderGalleryActivity extends AndroidApplication implements
-		ScreenshotProcessor, ClickHandler {
+public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
+		ScreenshotProcessor, ClickHandler, ReqFailCallback {
 
 	private static final String HTTP_GLSL_HEROKU_COM_ITEM = "http://glsl.heroku.com/item/";
 
@@ -107,7 +110,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 	private int currentSelectedIndex = -1;
 
-	private DIYGslSurface mySurface;
+	DIYGslSurface mySurface;
 
 	private String screenShotFilename;
 
@@ -156,6 +159,8 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 
+		LiveWallpaper.galleryAppInstance = this;
+		
 		// Create a new Handler that is being associated to the
 		// main thread.
 		handler = new Handler();
@@ -179,8 +184,8 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 			} else {
 				requestWindowFeature(Window.FEATURE_NO_TITLE);
 			}
-		} catch (Exception ex) {
-			// API < 14
+		} catch (Error err) {
+			// API < 14 ( => java.lang.NoSuchMethodError)
 			// Option key is required on this system
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 		}
@@ -321,7 +326,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 			Toast.makeText(ShaderGalleryActivity.this,
 					getResources().getString(R.string.exiting),
 					Toast.LENGTH_SHORT).show();
-			finish();
+			moveTaskToBack(true);
 			return true;
 		}
 		return false;
@@ -378,7 +383,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 
 	/**
 	 * Do what we can to help the user active the builtin Live Wallpaper Code
-	 * from stackoverflow...
+	 * from stackoverflow... on non standard ROMS, this will fail
 	 */
 	@SuppressLint("InlinedApi")
 	public void setOwnLWP() {
@@ -480,6 +485,7 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 	@Override
 	protected void onDestroy() {
 		mHandler.removeCallbacks(mRequestFocus);
+		LiveWallpaper.galleryAppInstance = null;
 
 		super.onDestroy();
 	}
@@ -606,15 +612,41 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 		cfg.resolutionStrategy = new PreviewResStrategy(this, _200_PX);
 
 		// TODO : settings for preview
+		DIYGslSurface.setRenderGuard(true);
+		
+		
+//		if (glslView == null &&  graphics != null) {
+//		
+//			// Second activity (ie Livewallpaper is active and running)
+//			// dispose ressources
+//			mySurface.dispose();
+//			graphics.clearManagedCaches();
+//			destroyGraphics();
+//
+////			if (getGraphicsView() instanceof GLSurfaceViewCupcake)
+////				((GLSurfaceViewCupcake) getGraphicsView()).onPause();
+////			if (getGraphicsView() instanceof android.opengl.GLSurfaceView)
+////				((android.opengl.GLSurfaceView) getGraphicsView()).onPause();
+//			
+//			// Maybe we should wait and dot the rest of the init in the first render call.. ??
+//		}
+
 		mySurface = new DIYGslSurface(code, true, 4, true, true, true, 4);
 		mySurface.setScreenshotProc(this);
+		// impossible to check immediately for GL20 / Surface is created
+		// asynchronously we had a callback to get a chance to notify the user
+		mySurface.addReqFailCallback(this);
+		
+
+		
 		glslView = initializeForView(mySurface, cfg);
+		
+		DIYGslSurface.setRenderGuard(false);
 
 		// Add callback for click in preview mode
 		mySurface.addClickHandler(this);
 
-		// impossible to check immediately for GL20 / Surface is created
-		// asynchronously
+
 
 		currentFragShaderProgram = code;
 
@@ -930,6 +962,15 @@ public class ShaderGalleryActivity extends AndroidApplication implements
 			this.parentActivity.goToFullViewIfPossible();
 			;
 		}
+	}
+
+	@Override
+	public void onRequirementFailure(String msg) {
+		Toast.makeText(this,
+				getResources().getString(R.string.openGLRequirementsFailure),
+				Toast.LENGTH_LONG).show();
+		exit();
+
 	}
 
 }

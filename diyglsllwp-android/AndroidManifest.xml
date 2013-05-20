@@ -7,8 +7,9 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.softwaresemantics.diyglsllwp"
-    android:versionCode="2"
-    android:versionName="1.0" >
+    android:largeHeap="true"
+    android:versionCode="3"
+    android:versionName="1.1" >
 
     <uses-feature android:name="android.software.live_wallpaper" />
 
@@ -25,9 +26,10 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_diyglsllwp"
         android:label="@string/app_name"
-        android:largeHeap="true"
-        android:launchMode="singleTask"
-        android:multiprocess="false" >
+        android:largeHeap="true">
+        
+<!--                 android:launchMode="singleTask" -->
+<!--         android:multiprocess="false"  -->
 
         <!-- android:noHistory="true" -->
         <activity
