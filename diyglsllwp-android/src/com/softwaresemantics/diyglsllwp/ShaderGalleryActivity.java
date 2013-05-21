@@ -156,7 +156,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 
-		LiveWallpaper.galleryAppInstance = this;
+		LiveWallpaperService.galleryAppInstance = this;
 
 		// Create a new Handler that is being associated to the
 		// main thread.
@@ -188,8 +188,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		}
 
 		// Try to to keep the UI fluid
-		// android.os.Process
-		// .setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 
 		nbElementParPage = 50;
 		values = new Entry[nbElementParPage];
@@ -390,9 +389,9 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 
 		// try the new Jelly Bean direct android wallpaper chooser first
 		try {
-			ComponentName component = new ComponentName(LiveWallpaper.class
+			ComponentName component = new ComponentName(LiveWallpaperService.class
 					.getPackage().getName(),
-					LiveWallpaper.class.getCanonicalName());
+					LiveWallpaperService.class.getCanonicalName());
 			intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
 			intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
 					component);
@@ -484,7 +483,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 	@Override
 	protected void onDestroy() {
 		mHandler.removeCallbacks(mRequestFocus);
-		LiveWallpaper.galleryAppInstance = null;
+		LiveWallpaperService.galleryAppInstance = null;
 
 		super.onDestroy();
 	}
@@ -677,7 +676,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		File lwp = saveCurrentSelectedShader(
 				ShaderStorage.getDiyGlslLwpShaderDir(this), ShaderStorage.LWP);
 
-		LiveWallpaper.reloadShaderIfNeeded();
+		LiveWallpaperService.reloadShaderIfNeeded();
 
 		return lwp;
 	}

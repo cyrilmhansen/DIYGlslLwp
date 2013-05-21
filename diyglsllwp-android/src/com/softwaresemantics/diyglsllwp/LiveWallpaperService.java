@@ -24,12 +24,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.badlogic.gdx.android.AndroidWallpaperListener;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidLiveWallpaperService;
+import com.badlogic.gdx.backends.android.AndroidWallpaperListener;
 import com.badlogic.gdx.files.FileHandle;
 
-public class LiveWallpaper extends AndroidLiveWallpaperService implements
+public class LiveWallpaperService extends AndroidLiveWallpaperService implements
 		SharedPreferences.OnSharedPreferenceChangeListener, NativeCallback {
 
 	private static final String RELOAD_SHADER = "RELOAD_SHADER";
@@ -40,13 +40,13 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 	private DIYGslSurface lwpSurface;
 	private LiveWallpaperPrefs prefs;
 
-	static LiveWallpaper instance;
+	static LiveWallpaperService instance;
 	static ShaderGalleryActivity galleryAppInstance;
 
 	public void onCreateApplication() {
 		super.onCreateApplication();
 
-		LiveWallpaper.instance = this;
+		LiveWallpaperService.instance = this;
 
 		config = new AndroidApplicationConfiguration();
 		config.useGL20 = true;
@@ -69,6 +69,9 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 
 		// TODO Add preference for LWP process priority
 
+		// Try to to keep the UI fluid
+		android.os.Process
+				.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 	}
 
 	protected void initGDX() {
@@ -215,7 +218,7 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 		// First check that the service is running
 		if (isLWPRunning(ctx)) {
 			Intent intent = new Intent(ctx.getApplicationContext(),
-					LiveWallpaper.class);
+					LiveWallpaperService.class);
 			intent.setAction(RELOAD_SHADER);
 			// intent.set
 			ctx.startService(intent);
@@ -228,7 +231,7 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 				.getSystemService(Context.ACTIVITY_SERVICE);
 		for (RunningServiceInfo service : manager
 				.getRunningServices(Integer.MAX_VALUE)) {
-			if (LiveWallpaper.class.getName().equals(
+			if (LiveWallpaperService.class.getName().equals(
 					service.service.getClassName())) {
 				return true;
 			}
@@ -245,9 +248,38 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 
 	@Override
 	public void onResumeGDX() {
+
+		// Try to to keep the UI fluid
+		android.os.Process
+				.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+
+		// android.os.Debug.waitForDebugger();*
+
+		// setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		// ((AndroidGraphicsLiveWallpaper) Gdx.graphics).
+
+		// lwpSurface.dispose();
+		// if (Gdx.graphics != null) {
+		// ((AndroidGraphicsLiveWallpaper) Gdx.graphics).clearManagedCaches();
+		// }
+
+		// ((CustomAndroidLiveWallpaper) getLiveWallpaper())
+		// .setGraphics(new AndroidGraphicsLiveWallpaper(
+		// getLiveWallpaper(), config, config.resolutionStrategy));
+
+		// ((CustomAndroidLiveWallpaper) getLiveWallpaper())
+		// .forceRecreateGraphics();
+
+		// initGDX();
+
 		// Force full reinit for performance reason
 		// (cache problems in some opengl es implementations)
-		initGDX();
+		// if (linkedEngine != null) {
+		// // linkedEngine.onSurfaceCreated(getSurfaceHolder());
+		//
+		// linkedEngine.onResume();
+		// }
+
 	}
 
 }

@@ -39,6 +39,7 @@
     <string name="aPropos">About this app</string>
     <string name="quit">Quit App</string>
     <string name="ok">OK</string>
-    <string name="openGLRequirementsFailure">OpenGL 2 ES required</string>
+    <string name="openGLRequirementsFailure">OpenGL 2 ES required</string>    
+    <string name="diyglsllwp_lwp_desc">Live wallpaper using custom fragment shader on external storage</string>
 
 </resources>

@@ -1020,11 +1020,11 @@ android.support.v4.widget.EdgeEffectCompat$EdgeEffectImpl -> android.support.v4.
 com.badlogic.gdx.Application -> com.badlogic.gdx.a:
     com.badlogic.gdx.Graphics getGraphics() -> getGraphics
     void log(java.lang.String,java.lang.String) -> log
+    void log(java.lang.String,java.lang.String,java.lang.Exception) -> log
     void error(java.lang.String,java.lang.String,java.lang.Throwable) -> error
     void debug(java.lang.String,java.lang.String) -> debug
     com.badlogic.gdx.Application$ApplicationType getType() -> getType
     void postRunnable(java.lang.Runnable) -> postRunnable
-    void exit() -> exit
 com.badlogic.gdx.Application$ApplicationType -> com.badlogic.gdx.b:
     com.badlogic.gdx.Application$ApplicationType Android -> a
     com.badlogic.gdx.Application$ApplicationType Desktop -> b
@@ -1035,11 +1035,12 @@ com.badlogic.gdx.Application$ApplicationType -> com.badlogic.gdx.b:
     com.badlogic.gdx.Application$ApplicationType[] values() -> values
     com.badlogic.gdx.Application$ApplicationType valueOf(java.lang.String) -> valueOf
 com.badlogic.gdx.ApplicationListener -> com.badlogic.gdx.c:
-    void create() -> a
-    void resize(int,int) -> a
-    void render() -> b
-    void pause() -> c
-    void resume() -> d
+    void create() -> create
+    void resize(int,int) -> resize
+    void render() -> render
+    void pause() -> pause
+    void resume() -> resume
+    void dispose() -> dispose
 com.badlogic.gdx.Audio -> com.badlogic.gdx.d:
 com.badlogic.gdx.Files -> com.badlogic.gdx.e:
     com.badlogic.gdx.files.FileHandle classpath(java.lang.String) -> classpath
@@ -1076,6 +1077,7 @@ com.badlogic.gdx.Graphics -> com.badlogic.gdx.h:
     float getRawDeltaTime() -> getRawDeltaTime
     int getFramesPerSecond() -> getFramesPerSecond
     com.badlogic.gdx.Graphics$DisplayMode getDesktopDisplayMode() -> getDesktopDisplayMode
+    void setVSync(boolean) -> setVSync
     boolean supportsExtension(java.lang.String) -> supportsExtension
     void requestRendering() -> requestRendering
 com.badlogic.gdx.Graphics$BufferFormat -> com.badlogic.gdx.i:
@@ -1156,6 +1158,8 @@ com.badlogic.gdx.Net$Protocol -> com.badlogic.gdx.v:
     com.badlogic.gdx.Net$Protocol valueOf(java.lang.String) -> valueOf
 com.badlogic.gdx.Preferences -> com.badlogic.gdx.w:
 com.badlogic.gdx.android.AndroidWallpaperListener -> com.badlogic.gdx.a.a:
+    void offsetChange(float,float,float,float,int,int) -> offsetChange
+    void previewStateChange(boolean) -> previewStateChange
 com.badlogic.gdx.assets.AssetDescriptor -> com.badlogic.gdx.b.a:
     java.lang.String fileName -> a
     java.lang.Class type -> b
@@ -2418,6 +2422,11 @@ com.badlogic.gdx.backends.android.AndroidSound -> com.badlogic.gdx.backends.andr
 com.badlogic.gdx.backends.android.AndroidTouchHandler -> com.badlogic.gdx.backends.android.AndroidTouchHandler:
     void onTouch(android.view.MotionEvent,com.badlogic.gdx.backends.android.AndroidInput) -> onTouch
     boolean supportsMultitouch(android.content.Context) -> supportsMultitouch
+com.badlogic.gdx.backends.android.CustomAndroidGDXApp -> com.badlogic.gdx.backends.android.CustomAndroidGDXApp:
+    void destroyGraphics() -> destroyGraphics
+    com.badlogic.gdx.backends.android.AndroidGraphics getGraphics() -> getGraphics
+    android.view.View getGraphicsView() -> getGraphicsView
+    com.badlogic.gdx.Graphics getGraphics() -> getGraphics
 com.badlogic.gdx.backends.android.InputProcessorLW -> com.badlogic.gdx.backends.android.InputProcessorLW:
     void touchDrop(int,int) -> touchDrop
 com.badlogic.gdx.backends.android.surfaceview.DefaultGLSurfaceView -> com.badlogic.gdx.backends.android.surfaceview.DefaultGLSurfaceView:
@@ -3528,23 +3537,7 @@ com.badlogic.gdx.files.FileHandle -> com.badlogic.gdx.d.a:
     void copyDirectory(com.badlogic.gdx.files.FileHandle,com.badlogic.gdx.files.FileHandle) -> copyDirectory
 com.badlogic.gdx.files.FileHandle$1 -> com.badlogic.gdx.d.b:
     int[] $SwitchMap$com$badlogic$gdx$Files$FileType -> a
-com.badlogic.gdx.graphics.Camera -> com.badlogic.gdx.graphics.a:
-    com.badlogic.gdx.math.Vector3 position -> a
-    com.badlogic.gdx.math.Vector3 direction -> b
-    com.badlogic.gdx.math.Vector3 up -> c
-    com.badlogic.gdx.math.Matrix4 projection -> d
-    com.badlogic.gdx.math.Matrix4 view -> e
-    com.badlogic.gdx.math.Matrix4 combined -> f
-    com.badlogic.gdx.math.Matrix4 invProjectionView -> g
-    float near -> h
-    float far -> i
-    float viewportWidth -> j
-    float viewportHeight -> k
-    com.badlogic.gdx.math.Frustum frustum -> l
-    com.badlogic.gdx.math.Vector3 tmpVec -> o
-    com.badlogic.gdx.math.Vector3 right -> m
-    com.badlogic.gdx.math.collision.Ray ray -> n
-com.badlogic.gdx.graphics.Color -> com.badlogic.gdx.graphics.b:
+com.badlogic.gdx.graphics.Color -> com.badlogic.gdx.graphics.a:
     com.badlogic.gdx.graphics.Color CLEAR -> a
     com.badlogic.gdx.graphics.Color WHITE -> b
     com.badlogic.gdx.graphics.Color BLACK -> c
@@ -3570,7 +3563,7 @@ com.badlogic.gdx.graphics.Color -> com.badlogic.gdx.graphics.b:
     int toIntBits() -> c
     java.lang.String toString() -> toString
     int rgba8888$40983718() -> b
-com.badlogic.gdx.graphics.GL10 -> com.badlogic.gdx.graphics.c:
+com.badlogic.gdx.graphics.GL10 -> com.badlogic.gdx.graphics.b:
     void glClientActiveTexture(int) -> glClientActiveTexture
     void glColorPointer(int,int,int,java.nio.Buffer) -> glColorPointer
     void glDisableClientState(int) -> glDisableClientState
@@ -3580,7 +3573,7 @@ com.badlogic.gdx.graphics.GL10 -> com.badlogic.gdx.graphics.c:
     void glNormalPointer(int,int,java.nio.Buffer) -> glNormalPointer
     void glTexCoordPointer(int,int,int,java.nio.Buffer) -> glTexCoordPointer
     void glVertexPointer(int,int,int,java.nio.Buffer) -> glVertexPointer
-com.badlogic.gdx.graphics.GL11 -> com.badlogic.gdx.graphics.d:
+com.badlogic.gdx.graphics.GL11 -> com.badlogic.gdx.graphics.c:
     void glBindBuffer(int,int) -> glBindBuffer
     void glBufferData(int,int,java.nio.Buffer,int) -> glBufferData
     void glBufferSubData(int,int,int,java.nio.Buffer) -> glBufferSubData
@@ -3591,7 +3584,7 @@ com.badlogic.gdx.graphics.GL11 -> com.badlogic.gdx.graphics.d:
     void glNormalPointer(int,int,int) -> glNormalPointer
     void glTexCoordPointer(int,int,int,int) -> glTexCoordPointer
     void glDrawElements(int,int,int,int) -> glDrawElements
-com.badlogic.gdx.graphics.GL20 -> com.badlogic.gdx.graphics.e:
+com.badlogic.gdx.graphics.GL20 -> com.badlogic.gdx.graphics.d:
     void glAttachShader(int,int) -> glAttachShader
     void glBindBuffer(int,int) -> glBindBuffer
     void glBindFramebuffer(int,int) -> glBindFramebuffer
@@ -3634,7 +3627,7 @@ com.badlogic.gdx.graphics.GL20 -> com.badlogic.gdx.graphics.e:
     void glUseProgram(int) -> glUseProgram
     void glVertexAttribPointer(int,int,int,boolean,int,java.nio.Buffer) -> glVertexAttribPointer
     void glVertexAttribPointer(int,int,int,boolean,int,int) -> glVertexAttribPointer
-com.badlogic.gdx.graphics.GLCommon -> com.badlogic.gdx.graphics.f:
+com.badlogic.gdx.graphics.GLCommon -> com.badlogic.gdx.graphics.e:
     void glBindTexture(int,int) -> glBindTexture
     void glBlendFunc(int,int) -> glBlendFunc
     void glClear(int) -> glClear
@@ -3654,7 +3647,7 @@ com.badlogic.gdx.graphics.GLCommon -> com.badlogic.gdx.graphics.f:
     void glTexImage2D(int,int,int,int,int,int,int,int,java.nio.Buffer) -> glTexImage2D
     void glTexParameterf(int,int,float) -> glTexParameterf
     void glViewport(int,int,int,int) -> glViewport
-com.badlogic.gdx.graphics.Mesh -> com.badlogic.gdx.graphics.g:
+com.badlogic.gdx.graphics.Mesh -> com.badlogic.gdx.graphics.f:
     java.util.Map meshes -> a
     boolean forceVBO -> b
     com.badlogic.gdx.graphics.glutils.VertexData vertices -> c
@@ -3668,23 +3661,19 @@ com.badlogic.gdx.graphics.Mesh -> com.badlogic.gdx.graphics.g:
     void render$7f380d0b(com.badlogic.gdx.graphics.glutils.ShaderProgram) -> a
     void render$6e88a955$67ca0758(com.badlogic.gdx.graphics.glutils.ShaderProgram,int) -> a
     void dispose() -> dispose
-    com.badlogic.gdx.graphics.VertexAttribute getVertexAttribute$33001f8f() -> a
-    java.nio.ShortBuffer getIndicesBuffer() -> b
+    java.nio.ShortBuffer getIndicesBuffer() -> a
     void addManagedMesh(com.badlogic.gdx.Application,com.badlogic.gdx.graphics.Mesh) -> a
     void invalidateAllMeshes(com.badlogic.gdx.Application) -> a
     void clearAllMeshes(com.badlogic.gdx.Application) -> b
-    java.lang.String getManagedStatus() -> c
-com.badlogic.gdx.graphics.Mesh$VertexDataType -> com.badlogic.gdx.graphics.h:
+    java.lang.String getManagedStatus() -> b
+com.badlogic.gdx.graphics.Mesh$VertexDataType -> com.badlogic.gdx.graphics.g:
     com.badlogic.gdx.graphics.Mesh$VertexDataType VertexArray -> a
     com.badlogic.gdx.graphics.Mesh$VertexDataType VertexBufferObject -> b
     com.badlogic.gdx.graphics.Mesh$VertexDataType VertexBufferObjectSubData -> c
     com.badlogic.gdx.graphics.Mesh$VertexDataType[] $VALUES -> d
     com.badlogic.gdx.graphics.Mesh$VertexDataType[] values() -> values
     com.badlogic.gdx.graphics.Mesh$VertexDataType valueOf(java.lang.String) -> valueOf
-com.badlogic.gdx.graphics.OrthographicCamera -> com.badlogic.gdx.graphics.i:
-    float zoom -> o
-    com.badlogic.gdx.math.Vector3 tmp -> p
-com.badlogic.gdx.graphics.Pixmap -> com.badlogic.gdx.graphics.j:
+com.badlogic.gdx.graphics.Pixmap -> com.badlogic.gdx.graphics.h:
     com.badlogic.gdx.graphics.Pixmap$Blending blending -> c
     com.badlogic.gdx.graphics.g2d.Gdx2DPixmap pixmap -> a
     int color -> b
@@ -3702,13 +3691,13 @@ com.badlogic.gdx.graphics.Pixmap -> com.badlogic.gdx.graphics.j:
     java.nio.ByteBuffer getPixels() -> f
     com.badlogic.gdx.graphics.Pixmap$Format getFormat() -> g
     com.badlogic.gdx.graphics.Pixmap$Blending getBlending() -> h
-com.badlogic.gdx.graphics.Pixmap$Blending -> com.badlogic.gdx.graphics.k:
+com.badlogic.gdx.graphics.Pixmap$Blending -> com.badlogic.gdx.graphics.i:
     com.badlogic.gdx.graphics.Pixmap$Blending None -> a
     com.badlogic.gdx.graphics.Pixmap$Blending SourceOver -> b
     com.badlogic.gdx.graphics.Pixmap$Blending[] $VALUES -> c
     com.badlogic.gdx.graphics.Pixmap$Blending[] values() -> values
     com.badlogic.gdx.graphics.Pixmap$Blending valueOf(java.lang.String) -> valueOf
-com.badlogic.gdx.graphics.Pixmap$Format -> com.badlogic.gdx.graphics.l:
+com.badlogic.gdx.graphics.Pixmap$Format -> com.badlogic.gdx.graphics.j:
     com.badlogic.gdx.graphics.Pixmap$Format Alpha -> a
     com.badlogic.gdx.graphics.Pixmap$Format Intensity -> b
     com.badlogic.gdx.graphics.Pixmap$Format LuminanceAlpha -> c
@@ -3721,13 +3710,13 @@ com.badlogic.gdx.graphics.Pixmap$Format -> com.badlogic.gdx.graphics.l:
     com.badlogic.gdx.graphics.Pixmap$Format valueOf(java.lang.String) -> valueOf
     int toGdx2DPixmapFormat(com.badlogic.gdx.graphics.Pixmap$Format) -> a
     com.badlogic.gdx.graphics.Pixmap$Format fromGdx2DPixmapFormat(int) -> a
-com.badlogic.gdx.graphics.PixmapIO -> com.badlogic.gdx.graphics.m:
+com.badlogic.gdx.graphics.PixmapIO -> com.badlogic.gdx.graphics.k:
     com.badlogic.gdx.graphics.Pixmap readCIM(com.badlogic.gdx.files.FileHandle) -> a
-com.badlogic.gdx.graphics.PixmapIO$CIM -> com.badlogic.gdx.graphics.n:
+com.badlogic.gdx.graphics.PixmapIO$CIM -> com.badlogic.gdx.graphics.l:
     byte[] writeBuffer -> a
     byte[] readBuffer -> b
     com.badlogic.gdx.graphics.Pixmap read(com.badlogic.gdx.files.FileHandle) -> a
-com.badlogic.gdx.graphics.Texture -> com.badlogic.gdx.graphics.o:
+com.badlogic.gdx.graphics.Texture -> com.badlogic.gdx.graphics.m:
     boolean enforcePotImages -> h
     com.badlogic.gdx.assets.AssetManager assetManager -> i
     java.util.Map managedTextures -> a
@@ -3752,10 +3741,10 @@ com.badlogic.gdx.graphics.Texture -> com.badlogic.gdx.graphics.o:
     void clearAllTextures(com.badlogic.gdx.Application) -> a
     void invalidateAllTextures(com.badlogic.gdx.Application) -> b
     java.lang.String getManagedStatus() -> e
-com.badlogic.gdx.graphics.Texture$1 -> com.badlogic.gdx.graphics.p:
+com.badlogic.gdx.graphics.Texture$1 -> com.badlogic.gdx.graphics.n:
     int val$refCount -> a
     void finishedLoading$190c2c84(com.badlogic.gdx.assets.AssetManager,java.lang.String) -> a
-com.badlogic.gdx.graphics.Texture$TextureFilter -> com.badlogic.gdx.graphics.q:
+com.badlogic.gdx.graphics.Texture$TextureFilter -> com.badlogic.gdx.graphics.o:
     com.badlogic.gdx.graphics.Texture$TextureFilter Nearest -> a
     com.badlogic.gdx.graphics.Texture$TextureFilter Linear -> b
     com.badlogic.gdx.graphics.Texture$TextureFilter MipMap -> c
@@ -3768,7 +3757,7 @@ com.badlogic.gdx.graphics.Texture$TextureFilter -> com.badlogic.gdx.graphics.q:
     com.badlogic.gdx.graphics.Texture$TextureFilter[] values() -> values
     com.badlogic.gdx.graphics.Texture$TextureFilter valueOf(java.lang.String) -> valueOf
     int getGLEnum() -> a
-com.badlogic.gdx.graphics.Texture$TextureWrap -> com.badlogic.gdx.graphics.r:
+com.badlogic.gdx.graphics.Texture$TextureWrap -> com.badlogic.gdx.graphics.p:
     com.badlogic.gdx.graphics.Texture$TextureWrap MirroredRepeat -> a
     com.badlogic.gdx.graphics.Texture$TextureWrap ClampToEdge -> b
     com.badlogic.gdx.graphics.Texture$TextureWrap Repeat -> c
@@ -3777,7 +3766,7 @@ com.badlogic.gdx.graphics.Texture$TextureWrap -> com.badlogic.gdx.graphics.r:
     com.badlogic.gdx.graphics.Texture$TextureWrap[] values() -> values
     com.badlogic.gdx.graphics.Texture$TextureWrap valueOf(java.lang.String) -> valueOf
     int getGLEnum() -> a
-com.badlogic.gdx.graphics.TextureData -> com.badlogic.gdx.graphics.s:
+com.badlogic.gdx.graphics.TextureData -> com.badlogic.gdx.graphics.q:
     com.badlogic.gdx.graphics.TextureData$TextureDataType getType() -> a
     boolean isPrepared() -> b
     void prepare() -> c
@@ -3789,20 +3778,20 @@ com.badlogic.gdx.graphics.TextureData -> com.badlogic.gdx.graphics.s:
     com.badlogic.gdx.graphics.Pixmap$Format getFormat() -> i
     boolean useMipMaps() -> j
     boolean isManaged() -> k
-com.badlogic.gdx.graphics.TextureData$TextureDataType -> com.badlogic.gdx.graphics.t:
+com.badlogic.gdx.graphics.TextureData$TextureDataType -> com.badlogic.gdx.graphics.r:
     com.badlogic.gdx.graphics.TextureData$TextureDataType Pixmap -> a
     com.badlogic.gdx.graphics.TextureData$TextureDataType Compressed -> b
     com.badlogic.gdx.graphics.TextureData$TextureDataType Float -> c
     com.badlogic.gdx.graphics.TextureData$TextureDataType[] $VALUES -> d
     com.badlogic.gdx.graphics.TextureData$TextureDataType[] values() -> values
     com.badlogic.gdx.graphics.TextureData$TextureDataType valueOf(java.lang.String) -> valueOf
-com.badlogic.gdx.graphics.VertexAttribute -> com.badlogic.gdx.graphics.u:
+com.badlogic.gdx.graphics.VertexAttribute -> com.badlogic.gdx.graphics.s:
     int usage -> a
     int numComponents -> b
     int offset -> c
     java.lang.String alias -> d
     boolean equals(java.lang.Object) -> equals
-com.badlogic.gdx.graphics.VertexAttributes -> com.badlogic.gdx.graphics.v:
+com.badlogic.gdx.graphics.VertexAttributes -> com.badlogic.gdx.graphics.t:
     com.badlogic.gdx.graphics.VertexAttribute[] attributes -> b
     int vertexSize -> a
     int calculateOffsets() -> b
@@ -4176,7 +4165,6 @@ com.badlogic.gdx.graphics.glutils.VertexArray -> com.badlogic.gdx.graphics.gluti
     void unbind() -> c
     void bind(com.badlogic.gdx.graphics.glutils.ShaderProgram) -> a
     void unbind(com.badlogic.gdx.graphics.glutils.ShaderProgram) -> b
-    com.badlogic.gdx.graphics.VertexAttributes getAttributes() -> d
 com.badlogic.gdx.graphics.glutils.VertexBufferObject -> com.badlogic.gdx.graphics.glutils.m:
     java.nio.IntBuffer tmpHandle -> a
     com.badlogic.gdx.graphics.VertexAttributes attributes -> b
@@ -4187,15 +4175,14 @@ com.badlogic.gdx.graphics.glutils.VertexBufferObject -> com.badlogic.gdx.graphic
     int usage -> g
     boolean isDirty -> h
     boolean isBound -> i
-    int createBufferObject() -> f
-    com.badlogic.gdx.graphics.VertexAttributes getAttributes() -> d
+    int createBufferObject() -> e
     int getNumVertices() -> a
     void setVertices$1cc109a0(float[],int) -> a
     void bind() -> b
     void bind(com.badlogic.gdx.graphics.glutils.ShaderProgram) -> a
     void unbind() -> c
     void unbind(com.badlogic.gdx.graphics.glutils.ShaderProgram) -> b
-    void invalidate() -> e
+    void invalidate() -> d
     void dispose() -> dispose
 com.badlogic.gdx.graphics.glutils.VertexBufferObjectSubData -> com.badlogic.gdx.graphics.glutils.n:
     java.nio.IntBuffer tmpHandle -> a
@@ -4208,7 +4195,6 @@ com.badlogic.gdx.graphics.glutils.VertexBufferObjectSubData -> com.badlogic.gdx.
     int usage -> h
     boolean isDirty -> i
     boolean isBound -> j
-    com.badlogic.gdx.graphics.VertexAttributes getAttributes() -> d
     int getNumVertices() -> a
     void setVertices$1cc109a0(float[],int) -> a
     void bind() -> b
@@ -4218,7 +4204,6 @@ com.badlogic.gdx.graphics.glutils.VertexBufferObjectSubData -> com.badlogic.gdx.
     void dispose() -> dispose
 com.badlogic.gdx.graphics.glutils.VertexData -> com.badlogic.gdx.graphics.glutils.o:
     int getNumVertices() -> a
-    com.badlogic.gdx.graphics.VertexAttributes getAttributes() -> d
     void setVertices$1cc109a0(float[],int) -> a
     void bind() -> b
     void unbind() -> c
@@ -4258,9 +4243,13 @@ com.badlogic.gdx.input.GestureDetector$1 -> com.badlogic.gdx.e.b:
     com.badlogic.gdx.input.GestureDetector this$0 -> a
     void run() -> run
 com.badlogic.gdx.input.GestureDetector$GestureListener -> com.badlogic.gdx.e.c:
-    boolean touchDown$4096cea7(float,float) -> a
-    boolean pan$40983707(float,float) -> b
-    boolean zoom(float,float) -> c
+    boolean touchDown(float,float,int,int) -> touchDown
+    boolean tap(float,float,int,int) -> tap
+    boolean longPress(float,float) -> longPress
+    boolean fling(float,float,int) -> fling
+    boolean pan(float,float,float,float) -> pan
+    boolean zoom(float,float) -> zoom
+    boolean pinch(com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2) -> pinch
 com.badlogic.gdx.input.GestureDetector$VelocityTracker -> com.badlogic.gdx.e.d:
     int sampleSize -> a
     float lastX -> b
@@ -4278,14 +4267,7 @@ com.badlogic.gdx.input.GestureDetector$VelocityTracker -> com.badlogic.gdx.e.d:
     float getVelocityY() -> b
     float getAverage(float[],int) -> a
     long getAverage(long[],int) -> a
-com.badlogic.gdx.math.Frustum -> com.badlogic.gdx.math.a:
-    com.badlogic.gdx.math.Vector3[] clipSpacePlanePoints -> a
-    float[] clipSpacePlanePointsArray -> b
-    com.badlogic.gdx.math.Plane[] planes -> c
-    com.badlogic.gdx.math.Vector3[] planePoints -> d
-    float[] planePointsArray -> e
-    void update(com.badlogic.gdx.math.Matrix4) -> a
-com.badlogic.gdx.math.MathUtils -> com.badlogic.gdx.math.b:
+com.badlogic.gdx.math.MathUtils -> com.badlogic.gdx.math.a:
     int ATAN2_DIM -> a
     float INV_ATAN2_DIM_MINUS_1 -> c
     java.util.Random random -> b
@@ -4306,20 +4288,10 @@ com.badlogic.gdx.math.Matrix4 -> com.badlogic.gdx.math.Matrix4:
     com.badlogic.gdx.math.Vector3 tmpUp -> k
     com.badlogic.gdx.math.Matrix4 set(com.badlogic.gdx.math.Matrix4) -> a
     com.badlogic.gdx.math.Matrix4 mul(com.badlogic.gdx.math.Matrix4) -> b
-    com.badlogic.gdx.math.Matrix4 idt() -> a
     com.badlogic.gdx.math.Matrix4 setToOrtho2D$7167aba2(float,float) -> a
-    com.badlogic.gdx.math.Matrix4 setToOrtho(float,float,float,float,float,float) -> a
-    com.badlogic.gdx.math.Matrix4 setToLookAt(com.badlogic.gdx.math.Vector3,com.badlogic.gdx.math.Vector3,com.badlogic.gdx.math.Vector3) -> a
     java.lang.String toString() -> toString
     void mul(float[],float[]) -> mul
-    void prj(float[],float[],int,int,int) -> prj
-    boolean inv(float[]) -> inv
-com.badlogic.gdx.math.Plane -> com.badlogic.gdx.math.c:
-    com.badlogic.gdx.math.Vector3 normal -> a
-    float d -> b
-    void set(com.badlogic.gdx.math.Vector3,com.badlogic.gdx.math.Vector3,com.badlogic.gdx.math.Vector3) -> a
-    java.lang.String toString() -> toString
-com.badlogic.gdx.math.Quaternion -> com.badlogic.gdx.math.d:
+com.badlogic.gdx.math.Quaternion -> com.badlogic.gdx.math.b:
     com.badlogic.gdx.math.Quaternion tmp1 -> e
     com.badlogic.gdx.math.Quaternion tmp2 -> f
     float x -> a
@@ -4329,7 +4301,7 @@ com.badlogic.gdx.math.Quaternion -> com.badlogic.gdx.math.d:
     com.badlogic.gdx.math.Quaternion set$4e318ec7(float) -> a
     java.lang.String toString() -> toString
     boolean equals(java.lang.Object) -> equals
-com.badlogic.gdx.math.Vector2 -> com.badlogic.gdx.math.e:
+com.badlogic.gdx.math.Vector2 -> com.badlogic.gdx.math.c:
     com.badlogic.gdx.math.Vector2 X -> a
     com.badlogic.gdx.math.Vector2 Y -> b
     com.badlogic.gdx.math.Vector2 Zero -> c
@@ -4341,7 +4313,7 @@ com.badlogic.gdx.math.Vector2 -> com.badlogic.gdx.math.e:
     java.lang.String toString() -> toString
     int hashCode() -> hashCode
     boolean equals(java.lang.Object) -> equals
-com.badlogic.gdx.math.Vector3 -> com.badlogic.gdx.math.f:
+com.badlogic.gdx.math.Vector3 -> com.badlogic.gdx.math.d:
     float x -> a
     float y -> b
     float z -> c
@@ -4353,21 +4325,10 @@ com.badlogic.gdx.math.Vector3 -> com.badlogic.gdx.math.f:
     com.badlogic.gdx.math.Vector3 Z -> i
     com.badlogic.gdx.math.Vector3 Zero -> j
     com.badlogic.gdx.math.Matrix4 tmpMat -> k
-    com.badlogic.gdx.math.Vector3 set(float,float,float) -> b
-    com.badlogic.gdx.math.Vector3 set(com.badlogic.gdx.math.Vector3) -> a
-    com.badlogic.gdx.math.Vector3 tmp() -> a
-    com.badlogic.gdx.math.Vector3 tmp2() -> b
-    com.badlogic.gdx.math.Vector3 add(com.badlogic.gdx.math.Vector3) -> b
-    com.badlogic.gdx.math.Vector3 add(float,float,float) -> a
-    com.badlogic.gdx.math.Vector3 sub(com.badlogic.gdx.math.Vector3) -> c
-    com.badlogic.gdx.math.Vector3 scl(float) -> a
-    com.badlogic.gdx.math.Vector3 nor() -> c
-    float dot(com.badlogic.gdx.math.Vector3) -> d
-    com.badlogic.gdx.math.Vector3 crs(com.badlogic.gdx.math.Vector3) -> e
     java.lang.String toString() -> toString
     int hashCode() -> hashCode
     boolean equals(java.lang.Object) -> equals
-com.badlogic.gdx.math.WindowedMean -> com.badlogic.gdx.math.g:
+com.badlogic.gdx.math.WindowedMean -> com.badlogic.gdx.math.e:
     float[] values -> a
     int added_values -> b
     int last_value -> c
@@ -4376,11 +4337,6 @@ com.badlogic.gdx.math.WindowedMean -> com.badlogic.gdx.math.g:
     void clear() -> a
     void addValue(float) -> a
     float getMean() -> b
-com.badlogic.gdx.math.collision.Ray -> com.badlogic.gdx.math.a.a:
-    com.badlogic.gdx.math.Vector3 origin -> a
-    com.badlogic.gdx.math.Vector3 direction -> b
-    com.badlogic.gdx.math.Vector3 tmp -> c
-    java.lang.String toString() -> toString
 com.badlogic.gdx.net.HttpStatus -> com.badlogic.gdx.f.a:
     int statusCode -> a
 com.badlogic.gdx.net.NetJavaImpl -> com.badlogic.gdx.f.b:
@@ -6037,256 +5993,473 @@ com.google.ads.y -> com.google.ads.cb:
 com.google.ads.z -> com.google.ads.cc:
     com.google.ads.AdActivity$StaticMethodWrapper a -> a
     void a(com.google.ads.internal.d,java.util.HashMap,android.webkit.WebView) -> a
-com.softwaresemantics.diyglsllwp.AboutDialog -> com.softwaresemantics.diyglsllwp.a:
-    android.content.Context mContext -> a
+com.softwaresemantics.diyglsllwp.AboutDialog -> com.softwaresemantics.diyglsllwp.AboutDialog:
+    android.content.Context mContext -> mContext
     void onCreate(android.os.Bundle) -> onCreate
     boolean dispatchTouchEvent(android.view.MotionEvent) -> dispatchTouchEvent
-    java.lang.String readRawTextFile(int) -> a
-com.softwaresemantics.diyglsllwp.AlmostFSResStrategy -> com.softwaresemantics.diyglsllwp.b:
-    android.content.Context context -> a
-    int reservedHeight -> b
+    java.lang.String readRawTextFile(int) -> readRawTextFile
+com.softwaresemantics.diyglsllwp.AlmostFSResStrategy -> com.softwaresemantics.diyglsllwp.AlmostFSResStrategy:
+    android.content.Context context -> context
+    int reservedHeight -> reservedHeight
     com.badlogic.gdx.backends.android.surfaceview.ResolutionStrategy$MeasuredDimension calcMeasures(int,int) -> calcMeasures
-com.softwaresemantics.diyglsllwp.ClickHandler -> com.softwaresemantics.diyglsllwp.c:
-    void onClick$255f295() -> a
-com.softwaresemantics.diyglsllwp.DIYGslSurface -> com.softwaresemantics.diyglsllwp.d:
-    java.lang.String shaderProgram -> c
-    com.badlogic.gdx.graphics.glutils.ShaderProgram shader -> d
-    com.badlogic.gdx.graphics.Mesh mesh -> a
-    com.badlogic.gdx.graphics.OrthographicCamera cam -> b
-    float m_fboScaler -> e
-    boolean m_fboEnabled -> f
-    boolean timeDithering -> g
-    int timeDitheringFactor -> h
-    int nbRender -> i
-    boolean touchEnabled -> j
-    com.badlogic.gdx.graphics.glutils.FrameBuffer m_fbo -> k
-    com.badlogic.gdx.graphics.g2d.TextureRegion m_fboRegion -> l
-    com.badlogic.gdx.graphics.g2d.SpriteBatch batch -> m
-    int renderSurfaceWidth -> n
-    int renderSurfaceHeight -> o
-    int effectiveSurfaceWidth -> p
-    int effectiveSurfaceHeight -> q
-    float mouseCursorX -> r
-    float mouseCursorY -> s
-    float time -> t
-    boolean doscreenShotRequest -> u
-    com.softwaresemantics.diyglsllwp.ScreenshotProcessor screenshotProc -> v
-    java.lang.String errorMsg -> w
-    boolean showFPS -> x
-    com.badlogic.gdx.graphics.g2d.BitmapFont font -> y
-    com.softwaresemantics.diyglsllwp.ClickHandler listener -> z
-    void updatePrefs(boolean,int,boolean,boolean,boolean,int) -> a
-    void updateShader(java.lang.String) -> a
-    void create() -> a
-    void setupShader() -> f
-    void render() -> b
-    void initRenderFramebufferIfNeeded() -> g
-    void forceNewRenderBuffer() -> h
-    void resize(int,int) -> a
-    void pause() -> c
-    void resume() -> d
-    void reserveRessources() -> i
-    boolean touchDown$4096cea7(float,float) -> a
-    boolean pan$40983707(float,float) -> b
-    boolean zoom(float,float) -> c
-    void setDoscreenShotRequest$1385ff() -> e
-    void setScreenshotProc(com.softwaresemantics.diyglsllwp.ScreenshotProcessor) -> a
-    void addClickHandler(com.softwaresemantics.diyglsllwp.ClickHandler) -> a
-com.softwaresemantics.diyglsllwp.DIYGslSurface$CustomShader -> com.softwaresemantics.diyglsllwp.e:
-com.softwaresemantics.diyglsllwp.DIYGslSurface$HerokuSampleShader -> com.softwaresemantics.diyglsllwp.f:
-com.softwaresemantics.diyglsllwp.DialogUtils -> com.softwaresemantics.diyglsllwp.g:
-    void inputDialog(android.content.Context,java.lang.String,boolean,com.softwaresemantics.diyglsllwp.InputDialogCallback) -> a
-com.softwaresemantics.diyglsllwp.DialogUtils$1 -> com.softwaresemantics.diyglsllwp.h:
+com.softwaresemantics.diyglsllwp.BuildConfig -> com.softwaresemantics.diyglsllwp.BuildConfig:
+    boolean DEBUG -> DEBUG
+com.softwaresemantics.diyglsllwp.ClickHandler -> com.softwaresemantics.diyglsllwp.ClickHandler:
+    void onClick(int,int) -> onClick
+com.softwaresemantics.diyglsllwp.DIYGslSurface -> com.softwaresemantics.diyglsllwp.DIYGslSurface:
+    java.lang.String OPEN_GL_ES_2_0_REQUIRED -> OPEN_GL_ES_2_0_REQUIRED
+    java.lang.String ERROR_LOADING_SHADER -> ERROR_LOADING_SHADER
+    java.lang.String HARDWARE_TOO_SLOW_FOR_SHADER -> HARDWARE_TOO_SLOW_FOR_SHADER
+    java.lang.String DO_PROCESS_SCREEN_SHOT -> DO_PROCESS_SCREEN_SHOT
+    java.lang.String NO_EXCEPTION_MSG -> NO_EXCEPTION_MSG
+    java.lang.String shaderProgram -> shaderProgram
+    com.badlogic.gdx.graphics.glutils.ShaderProgram shader -> shader
+    com.badlogic.gdx.graphics.Mesh mesh -> mesh
+    boolean timeDithering -> timeDithering
+    int timeDitheringFactor -> timeDitheringFactor
+    int nbRender -> nbRender
+    boolean touchEnabled -> touchEnabled
+    com.badlogic.gdx.graphics.glutils.FrameBuffer m_fbo -> m_fbo
+    com.badlogic.gdx.graphics.g2d.TextureRegion m_fboRegion -> m_fboRegion
+    com.badlogic.gdx.graphics.g2d.SpriteBatch batch -> batch
+    int renderSurfaceWidth -> renderSurfaceWidth
+    int renderSurfaceHeight -> renderSurfaceHeight
+    float m_fboScaler -> m_fboScaler
+    float epsilon -> epsilon
+    int effectiveSurfaceWidth -> effectiveSurfaceWidth
+    int effectiveSurfaceHeight -> effectiveSurfaceHeight
+    float mouseCursorX -> mouseCursorX
+    float mouseCursorY -> mouseCursorY
+    float time -> time
+    boolean doscreenShotRequest -> doscreenShotRequest
+    com.softwaresemantics.diyglsllwp.ScreenshotProcessor screenshotProc -> screenshotProc
+    java.lang.String errorMsg -> errorMsg
+    boolean showFPS -> showFPS
+    com.badlogic.gdx.graphics.g2d.BitmapFont font -> font
+    com.softwaresemantics.diyglsllwp.ClickHandler listener -> listener
+    com.softwaresemantics.diyglsllwp.NativeCallback nativeCallback -> nativeCallback
+    boolean renderGuard -> renderGuard
+    boolean needsGL20() -> needsGL20
+    void updatePrefs(boolean,int,boolean,boolean,boolean,int) -> updatePrefs
+    void updateShader(java.lang.String) -> updateShader
+    void create() -> create
+    void updateRenderSurfaceSize() -> updateRenderSurfaceSize
+    void setupShader() -> setupShader
+    void render() -> render
+    void displayErrorMsg() -> displayErrorMsg
+    boolean handleErrorAndSlowHardware() -> handleErrorAndSlowHardware
+    void initRenderFramebufferIfNeeded() -> initRenderFramebufferIfNeeded
+    void forceNewRenderBuffer() -> forceNewRenderBuffer
+    void resize(int,int) -> resize
+    void renderShaderonMesh() -> renderShaderonMesh
+    com.badlogic.gdx.graphics.Mesh genFullViewRectangle() -> genFullViewRectangle
+    void dispose() -> dispose
+    void pause() -> pause
+    void freeRessourcesIfAny() -> freeRessourcesIfAny
+    void resume() -> resume
+    void reserveRessources() -> reserveRessources
+    void previewStateChange(boolean) -> previewStateChange
+    boolean touchDown(float,float,int,int) -> touchDown
+    boolean tap(float,float,int,int) -> tap
+    boolean longPress(float,float) -> longPress
+    boolean fling(float,float,int) -> fling
+    boolean pan(float,float,float,float) -> pan
+    boolean zoom(float,float) -> zoom
+    boolean pinch(com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2) -> pinch
+    boolean isDoscreenShotRequest() -> isDoscreenShotRequest
+    void setDoscreenShotRequest(boolean) -> setDoscreenShotRequest
+    com.softwaresemantics.diyglsllwp.ScreenshotProcessor getScreenshotProc() -> getScreenshotProc
+    void setScreenshotProc(com.softwaresemantics.diyglsllwp.ScreenshotProcessor) -> setScreenshotProc
+    void addClickHandler(com.softwaresemantics.diyglsllwp.ClickHandler) -> addClickHandler
+    void offsetChange(float,float,float,float,int,int) -> offsetChange
+    void addNativeCallback(com.softwaresemantics.diyglsllwp.NativeCallback) -> addNativeCallback
+    boolean isRenderGuard() -> isRenderGuard
+    void setRenderGuard(boolean) -> setRenderGuard
+com.softwaresemantics.diyglsllwp.DIYGslSurface$CustomShader -> com.softwaresemantics.diyglsllwp.a:
+com.softwaresemantics.diyglsllwp.DIYGslSurface$HerokuSampleShader -> com.softwaresemantics.diyglsllwp.b:
+com.softwaresemantics.diyglsllwp.DialogUtils -> com.softwaresemantics.diyglsllwp.DialogUtils:
+    void inputDialog(android.content.Context,java.lang.String,boolean,com.softwaresemantics.diyglsllwp.InputDialogCallback) -> inputDialog
+com.softwaresemantics.diyglsllwp.DialogUtils$1 -> com.softwaresemantics.diyglsllwp.c:
     android.widget.EditText val$input -> a
     com.softwaresemantics.diyglsllwp.InputDialogCallback val$callback -> b
     void onClick(android.content.DialogInterface,int) -> onClick
-com.softwaresemantics.diyglsllwp.DialogUtils$2 -> com.softwaresemantics.diyglsllwp.i:
+com.softwaresemantics.diyglsllwp.DialogUtils$2 -> com.softwaresemantics.diyglsllwp.d:
     void onClick(android.content.DialogInterface,int) -> onClick
-com.softwaresemantics.diyglsllwp.Entry -> com.softwaresemantics.diyglsllwp.j:
-    java.lang.String refId -> a
-    android.graphics.Bitmap bmp -> b
-    java.lang.String description -> c
-    boolean selected -> d
-    java.lang.String getRefId() -> a
-    void setRefId(java.lang.String) -> a
-    android.graphics.Bitmap getBmp() -> b
-    void setBmp(android.graphics.Bitmap) -> a
+com.softwaresemantics.diyglsllwp.Entry -> com.softwaresemantics.diyglsllwp.Entry:
+    java.lang.String WAITING_FOR_DOWNLOAD -> WAITING_FOR_DOWNLOAD
+    java.lang.String refId -> refId
+    java.lang.String url -> url
+    java.lang.String description -> description
+    boolean selected -> selected
+    java.lang.String getRefId() -> getRefId
+    void setRefId(java.lang.String) -> setRefId
+    java.lang.String getDescription() -> getDescription
+    void setDescription(java.lang.String) -> setDescription
     java.lang.String toString() -> toString
-    void setSelected(boolean) -> a
-    boolean isSelected() -> c
-com.softwaresemantics.diyglsllwp.InputDialogCallback -> com.softwaresemantics.diyglsllwp.k:
-    void inputValue(java.lang.String) -> a
-com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask -> com.softwaresemantics.diyglsllwp.l:
-    com.softwaresemantics.diyglsllwp.ShaderGalleryActivity parentActivity -> a
-    int askedPageIndex -> b
-    java.lang.String doInBackground(java.lang.String[]) -> a
+    void setSelected(boolean) -> setSelected
+    boolean isSelected() -> isSelected
+    void setUrl(java.lang.String) -> setUrl
+    java.lang.String getUrl() -> getUrl
+com.softwaresemantics.diyglsllwp.ImageDownloader -> com.softwaresemantics.diyglsllwp.ImageDownloader:
+    java.lang.String LOG_TAG -> LOG_TAG
+    int HARD_CACHE_CAPACITY -> HARD_CACHE_CAPACITY
+    int DELAY_BEFORE_PURGE -> DELAY_BEFORE_PURGE
+    int IO_BUFFER_SIZE -> IO_BUFFER_SIZE
+    android.content.Context context -> context
+    java.util.HashMap sHardBitmapCache -> sHardBitmapCache
+    java.util.concurrent.ConcurrentHashMap sSoftBitmapCache -> sSoftBitmapCache
+    android.os.Handler purgeHandler -> purgeHandler
+    java.lang.Runnable purger -> purger
+    void download(java.lang.String,android.widget.ImageView) -> download
+    void forceDownload(java.lang.String,android.widget.ImageView) -> forceDownload
+    boolean cancelPotentialDownload(java.lang.String,android.widget.ImageView) -> cancelPotentialDownload
+    com.softwaresemantics.diyglsllwp.ImageDownloader$BitmapDownloaderTask getBitmapDownloaderTask(android.widget.ImageView) -> getBitmapDownloaderTask
+    android.graphics.Bitmap downloadBitmap(java.lang.String) -> downloadBitmap
+    void addBitmapToCache(java.lang.String,android.graphics.Bitmap) -> addBitmapToCache
+    android.graphics.Bitmap getBitmapFromCache(java.lang.String) -> getBitmapFromCache
+    void clearCache() -> clearCache
+    void resetPurgeTimer() -> resetPurgeTimer
+    java.util.concurrent.ConcurrentHashMap access$0() -> access$0
+    void access$1(com.softwaresemantics.diyglsllwp.ImageDownloader,java.lang.String,android.graphics.Bitmap) -> access$1
+    com.softwaresemantics.diyglsllwp.ImageDownloader$BitmapDownloaderTask access$2(android.widget.ImageView) -> access$2
+    android.content.Context access$3() -> access$3
+com.softwaresemantics.diyglsllwp.ImageDownloader$1 -> com.softwaresemantics.diyglsllwp.e:
+    com.softwaresemantics.diyglsllwp.ImageDownloader this$0 -> a
+    boolean removeEldestEntry(java.util.Map$Entry) -> removeEldestEntry
+com.softwaresemantics.diyglsllwp.ImageDownloader$2 -> com.softwaresemantics.diyglsllwp.f:
+    com.softwaresemantics.diyglsllwp.ImageDownloader this$0 -> a
+    void run() -> run
+com.softwaresemantics.diyglsllwp.ImageDownloader$BitmapDownloaderTask -> com.softwaresemantics.diyglsllwp.g:
+    java.lang.String url -> b
+    java.lang.ref.WeakReference imageViewReference -> c
+    com.softwaresemantics.diyglsllwp.ImageDownloader this$0 -> a
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-    int access$2(com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask) -> a
-com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask$UINotifier -> com.softwaresemantics.diyglsllwp.m:
+    java.lang.String access$2(com.softwaresemantics.diyglsllwp.ImageDownloader$BitmapDownloaderTask) -> a
+com.softwaresemantics.diyglsllwp.ImageDownloader$DownloadedDrawable -> com.softwaresemantics.diyglsllwp.h:
+    java.lang.ref.WeakReference bitmapDownloaderTaskReference -> a
+    com.softwaresemantics.diyglsllwp.ImageDownloader$BitmapDownloaderTask getBitmapDownloaderTask() -> a
+com.softwaresemantics.diyglsllwp.ImageDownloader$FlushedInputStream -> com.softwaresemantics.diyglsllwp.i:
+    long skip(long) -> skip
+com.softwaresemantics.diyglsllwp.InputDialogCallback -> com.softwaresemantics.diyglsllwp.InputDialogCallback:
+    void inputValue(java.lang.String) -> inputValue
+com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask -> com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask:
+    com.softwaresemantics.diyglsllwp.ShaderGalleryActivity parentActivity -> parentActivity
+    int askedPageIndex -> askedPageIndex
+    java.lang.String doInBackground(java.lang.String[]) -> doInBackground
+    void onPostExecute(java.lang.String) -> onPostExecute
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+    int access$2(com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask) -> access$2
+com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask$UINotifier -> com.softwaresemantics.diyglsllwp.j:
     com.softwaresemantics.diyglsllwp.ShaderGalleryActivity parentActivity -> b
     com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask this$0 -> a
     void run() -> run
-com.softwaresemantics.diyglsllwp.InternetAsyncShaderTask -> com.softwaresemantics.diyglsllwp.n:
-    com.softwaresemantics.diyglsllwp.ShaderGalleryActivity parentActivity -> a
-    int rowIndex -> b
-    java.lang.String doInBackground(java.lang.String[]) -> a
+com.softwaresemantics.diyglsllwp.InternetAsyncShaderTask -> com.softwaresemantics.diyglsllwp.InternetAsyncShaderTask:
+    java.lang.String CODE -> CODE
+    com.softwaresemantics.diyglsllwp.ShaderGalleryActivity parentActivity -> parentActivity
+    int rowIndex -> rowIndex
+    java.lang.String doInBackground(java.lang.String[]) -> doInBackground
+    void onPostExecute(java.lang.String) -> onPostExecute
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.softwaresemantics.diyglsllwp.InternetAsyncShaderTask$ShaderLauncher -> com.softwaresemantics.diyglsllwp.o:
+com.softwaresemantics.diyglsllwp.InternetAsyncShaderTask$ShaderLauncher -> com.softwaresemantics.diyglsllwp.k:
     com.softwaresemantics.diyglsllwp.ShaderGalleryActivity parentActivity -> b
     java.lang.String shader -> c
     int rowIndex -> d
     com.softwaresemantics.diyglsllwp.InternetAsyncShaderTask this$0 -> a
     void run() -> run
 com.softwaresemantics.diyglsllwp.LiveWallpaper -> com.softwaresemantics.diyglsllwp.LiveWallpaper:
-    com.badlogic.gdx.backends.android.AndroidApplicationConfiguration config -> a
-    java.lang.String shaderGLSL -> b
-    com.softwaresemantics.diyglsllwp.DIYGslSurface listener -> c
-    com.softwaresemantics.diyglsllwp.LiveWallpaperPrefs prefs -> d
-    com.softwaresemantics.diyglsllwp.LiveWallpaper instance -> e
+    java.lang.String RELOAD_SHADER -> RELOAD_SHADER
+    com.badlogic.gdx.backends.android.AndroidApplicationConfiguration config -> config
+    java.lang.String shaderGLSL -> shaderGLSL
+    com.softwaresemantics.diyglsllwp.DIYGslSurface lwpSurface -> lwpSurface
+    com.softwaresemantics.diyglsllwp.LiveWallpaperPrefs prefs -> prefs
+    com.softwaresemantics.diyglsllwp.LiveWallpaper instance -> instance
+    com.softwaresemantics.diyglsllwp.ShaderGalleryActivity galleryAppInstance -> galleryAppInstance
     void onCreateApplication() -> onCreateApplication
-    void reloadShader() -> b
+    void initGDX() -> initGDX
+    void reloadShader() -> reloadShader
     int onStartCommand(android.content.Intent,int,int) -> onStartCommand
-    void reloadShaderIfNeeded() -> a
+    void reloadShaderIfNeeded() -> reloadShaderIfNeeded
+    void notifyCfgChange() -> notifyCfgChange
     void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
-com.softwaresemantics.diyglsllwp.LiveWallpaperPrefs -> com.softwaresemantics.diyglsllwp.p:
-    android.content.Context context -> a
-    android.content.SharedPreferences prefs -> b
-    boolean isReductionFactorEnabled() -> a
-    boolean isTouchEnabled() -> b
-    boolean isDisplayFPSLWP() -> c
-    int getReductionFactor() -> d
-    boolean isTimeDithering() -> e
-    java.lang.Integer getTimeDitheringFactor() -> f
-    void registerOnSharedPreferenceChangeListener(android.content.SharedPreferences$OnSharedPreferenceChangeListener) -> a
+    void notifyShaderChange(android.content.Context) -> notifyShaderChange
+    boolean isLWPRunning(android.content.Context) -> isLWPRunning
+    void onRequirementFailure(java.lang.String) -> onRequirementFailure
+    void onResumeGDX() -> onResumeGDX
+com.softwaresemantics.diyglsllwp.LiveWallpaper$MyLiveWallpaperListener -> com.softwaresemantics.diyglsllwp.LiveWallpaper$MyLiveWallpaperListener:
+    com.softwaresemantics.diyglsllwp.LiveWallpaper this$0 -> this$0
+    void offsetChange(float,float,float,float,int,int) -> offsetChange
+    void previewStateChange(boolean) -> previewStateChange
+com.softwaresemantics.diyglsllwp.LiveWallpaperPrefs -> com.softwaresemantics.diyglsllwp.LiveWallpaperPrefs:
+    java.lang.String TIME_DITHERING_FACTOR -> TIME_DITHERING_FACTOR
+    java.lang.String TIME_DITHERING -> TIME_DITHERING
+    java.lang.String REDUCTION_FACTOR -> REDUCTION_FACTOR
+    java.lang.String TOUCH -> TOUCH
+    java.lang.String DISPLAY_FPS_LWP -> DISPLAY_FPS_LWP
+    java.lang.String REDUCED_RESOLUTION -> REDUCED_RESOLUTION
+    java.lang.String TIME_DITHERING_FACTOR_2 -> TIME_DITHERING_FACTOR_2
+    java.lang.String REDUCTION_FACTOR_8 -> REDUCTION_FACTOR_8
+    android.content.Context context -> context
+    android.content.SharedPreferences prefs -> prefs
+    void loadLWPPrefs() -> loadLWPPrefs
+    boolean isReductionFactorEnabled() -> isReductionFactorEnabled
+    boolean isTouchEnabled() -> isTouchEnabled
+    boolean isDisplayFPSLWP() -> isDisplayFPSLWP
+    int getReductionFactor() -> getReductionFactor
+    boolean isTimeDithering() -> isTimeDithering
+    java.lang.Integer getTimeDitheringFactor() -> getTimeDitheringFactor
+    void registerOnSharedPreferenceChangeListener(android.content.SharedPreferences$OnSharedPreferenceChangeListener) -> registerOnSharedPreferenceChangeListener
 com.softwaresemantics.diyglsllwp.LivewallpaperSettings -> com.softwaresemantics.diyglsllwp.LivewallpaperSettings:
     void onCreate(android.os.Bundle) -> onCreate
     boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.softwaresemantics.diyglsllwp.MyBroadCastReceiver -> com.softwaresemantics.diyglsllwp.MyBroadCastReceiver:
     void onReceive(android.content.Context,android.content.Intent) -> onReceive
-com.softwaresemantics.diyglsllwp.PreviewResStrategy -> com.softwaresemantics.diyglsllwp.q:
-    android.content.Context context -> a
-    int reservedHeight -> b
+com.softwaresemantics.diyglsllwp.NativeCallback -> com.softwaresemantics.diyglsllwp.NativeCallback:
+    void onRequirementFailure(java.lang.String) -> onRequirementFailure
+    void onResumeGDX() -> onResumeGDX
+com.softwaresemantics.diyglsllwp.PreviewResStrategy -> com.softwaresemantics.diyglsllwp.PreviewResStrategy:
+    android.content.Context context -> context
+    int reservedHeight -> reservedHeight
     com.badlogic.gdx.backends.android.surfaceview.ResolutionStrategy$MeasuredDimension calcMeasures(int,int) -> calcMeasures
-com.softwaresemantics.diyglsllwp.ScreenshotProcessor -> com.softwaresemantics.diyglsllwp.r:
-    void doProcessScreenShot() -> b
-com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter -> com.softwaresemantics.diyglsllwp.s:
-    android.content.Context context -> a
-    com.softwaresemantics.diyglsllwp.Entry[] values -> b
+com.softwaresemantics.diyglsllwp.R -> com.softwaresemantics.diyglsllwp.R:
+com.softwaresemantics.diyglsllwp.R$array -> com.softwaresemantics.diyglsllwp.R$array:
+    int reductionFactor -> reductionFactor
+    int reductionFactorValues -> reductionFactorValues
+com.softwaresemantics.diyglsllwp.R$attr -> com.softwaresemantics.diyglsllwp.R$attr:
+com.softwaresemantics.diyglsllwp.R$drawable -> com.softwaresemantics.diyglsllwp.R$drawable:
+    int diyglsllwp_full -> diyglsllwp_full
+    int ic_diyglsllwp -> ic_diyglsllwp
+    int loading -> loading
+com.softwaresemantics.diyglsllwp.R$id -> com.softwaresemantics.diyglsllwp.R$id:
+    int aPropos -> aPropos
+    int ad -> ad
+    int buttonDownload -> buttonDownload
+    int buttonEdit -> buttonEdit
+    int buttonViewFS -> buttonViewFS
+    int goToPage -> goToPage
+    int goToShader -> goToShader
+    int icon -> icon
+    int info_text -> info_text
+    int label -> label
+    int legal_text -> legal_text
+    int nextPageButton -> nextPageButton
+    int prefsLWP -> prefsLWP
+    int prevPageButton -> prevPageButton
+    int quit -> quit
+    int statusLabel -> statusLabel
+com.softwaresemantics.diyglsllwp.R$layout -> com.softwaresemantics.diyglsllwp.R$layout:
+    int about -> about
+    int main -> main
+    int pref_ad -> pref_ad
+    int rowlayout -> rowlayout
+com.softwaresemantics.diyglsllwp.R$menu -> com.softwaresemantics.diyglsllwp.R$menu:
+    int option -> option
+com.softwaresemantics.diyglsllwp.R$raw -> com.softwaresemantics.diyglsllwp.R$raw:
+    int info -> info
+    int legal -> legal
+com.softwaresemantics.diyglsllwp.R$string -> com.softwaresemantics.diyglsllwp.R$string:
+    int aPropos -> aPropos
+    int app_name -> app_name
+    int cancel -> cancel
+    int displayFPSLWP -> displayFPSLWP
+    int download -> download
+    int edit -> edit
+    int enableTouch -> enableTouch
+    int errorLaunchingLWPSelector -> errorLaunchingLWPSelector
+    int exiting -> exiting
+    int inputGalleryPage -> inputGalleryPage
+    int inputShaderRef -> inputShaderRef
+    int loadingGalleryPage -> loadingGalleryPage
+    int loadingShader -> loadingShader
+    int loadingStatus -> loadingStatus
+    int manualSelectLWP -> manualSelectLWP
+    int moveToPage -> moveToPage
+    int moveToShader -> moveToShader
+    int networkRequired -> networkRequired
+    int next_page -> next_page
+    int ok -> ok
+    int openGLRequirementsFailure -> openGLRequirementsFailure
+    int preferencesForLWP -> preferencesForLWP
+    int previous_page -> previous_page
+    int quit -> quit
+    int reducedResolution -> reducedResolution
+    int reductionFactor -> reductionFactor
+    int setAsLWP -> setAsLWP
+    int timeDithering -> timeDithering
+    int timeDitheringFactor -> timeDitheringFactor
+    int title_activity_settings -> title_activity_settings
+    int title_app -> title_app
+    int unableAccessExtStorage -> unableAccessExtStorage
+    int viewFS -> viewFS
+com.softwaresemantics.diyglsllwp.R$xml -> com.softwaresemantics.diyglsllwp.R$xml:
+    int livewallpaper -> livewallpaper
+    int prefs -> prefs
+com.softwaresemantics.diyglsllwp.RenderTarget -> com.softwaresemantics.diyglsllwp.RenderTarget:
+    int textureIndex -> textureIndex
+    int frameBufferIndex -> frameBufferIndex
+    int renderBufferIndex -> renderBufferIndex
+com.softwaresemantics.diyglsllwp.ScreenshotProcessor -> com.softwaresemantics.diyglsllwp.ScreenshotProcessor:
+    void doProcessScreenShot() -> doProcessScreenShot
+com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter -> com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter:
+    android.content.Context context -> context
+    com.softwaresemantics.diyglsllwp.Entry[] values -> values
+    com.softwaresemantics.diyglsllwp.ImageDownloader imageDownloader -> imageDownloader
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
-    android.content.Context access$0(com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter) -> a
-com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter$1 -> com.softwaresemantics.diyglsllwp.t:
+    android.content.Context access$0(com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter) -> access$0
+com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter$1 -> com.softwaresemantics.diyglsllwp.l:
     com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter this$0 -> a
     void onClick(android.view.View) -> onClick
-com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter$2 -> com.softwaresemantics.diyglsllwp.u:
+com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter$2 -> com.softwaresemantics.diyglsllwp.m:
     com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter this$0 -> a
     void onClick(android.view.View) -> onClick
-com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter$3 -> com.softwaresemantics.diyglsllwp.v:
+com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter$3 -> com.softwaresemantics.diyglsllwp.n:
     com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter this$0 -> a
     void onClick(android.view.View) -> onClick
 com.softwaresemantics.diyglsllwp.ShaderGalleryActivity -> com.softwaresemantics.diyglsllwp.ShaderGalleryActivity:
-    java.lang.String CURRENT_FRAG_SHADER_PROGRAM -> a
-    java.lang.String CURRENT_VERT_SHADER_PROGRAM -> b
-    java.lang.String currentFragShaderProgram -> f
-    com.softwaresemantics.diyglsllwp.Entry[] values -> g
-    com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter adapter -> h
-    int currentPageIndex -> i
-    int askedPageIndex -> j
-    android.widget.LinearLayout glayout -> k
-    android.view.View rootMainView -> l
-    android.widget.Button visibleButtonViewFS -> m
-    android.widget.Button visibleButtonSave -> n
-    android.widget.Button visibleButtonEdit -> o
-    int currentSelectedIndex -> p
-    com.softwaresemantics.diyglsllwp.DIYGslSurface mySurface -> q
-    java.lang.String screenShotFilename -> r
-    int nbElementParPage -> s
-    com.softwaresemantics.diyglsllwp.LiveWallpaperPrefs prefs -> c
-    android.view.View glslView -> t
-    android.app.ProgressDialog progressDialog -> u
-    android.widget.ListAdapter mAdapter -> d
-    android.widget.ListView mList -> e
-    android.os.Handler mHandler -> v
-    boolean mFinishedStart -> w
-    java.lang.Runnable mRequestFocus -> x
-    android.widget.AdapterView$OnItemClickListener mOnClickListener -> y
-    android.widget.Button cancelButton -> z
-    android.widget.Button setAsLWPButton -> A
+    java.lang.String HTTP_GLSL_HEROKU_COM_ITEM -> HTTP_GLSL_HEROKU_COM_ITEM
+    java.lang.String COM_SOFTWARESEMANTICS_DIYGLSLLWP_PREFS_LWP -> COM_SOFTWARESEMANTICS_DIYGLSLLWP_PREFS_LWP
+    java.lang.String DIY_GLSL_LWP_DIR_NAME -> DIY_GLSL_LWP_DIR_NAME
+    java.lang.String COM_HEROKU_GLSL -> COM_HEROKU_GLSL
+    int _200_PX -> _200_PX
+    int FS_BUTTON_HEIGHT -> FS_BUTTON_HEIGHT
+    int REQUEST_SET_LIVE_WALLPAPER -> REQUEST_SET_LIVE_WALLPAPER
+    java.lang.String CURRENT_FRAG_SHADER_PROGRAM -> CURRENT_FRAG_SHADER_PROGRAM
+    java.lang.String CURRENT_VERT_SHADER_PROGRAM -> CURRENT_VERT_SHADER_PROGRAM
+    java.lang.String currentFragShaderProgram -> currentFragShaderProgram
+    com.softwaresemantics.diyglsllwp.Entry[] values -> values
+    com.softwaresemantics.diyglsllwp.ShaderEntryArrayAdapter adapter -> adapter
+    int currentPageIndex -> currentPageIndex
+    int askedPageIndex -> askedPageIndex
+    android.widget.LinearLayout glayout -> glayout
+    android.view.View rootMainView -> rootMainView
+    android.widget.Button visibleButtonViewFS -> visibleButtonViewFS
+    android.widget.Button visibleButtonSave -> visibleButtonSave
+    android.widget.Button visibleButtonEdit -> visibleButtonEdit
+    int currentSelectedIndex -> currentSelectedIndex
+    com.softwaresemantics.diyglsllwp.DIYGslSurface mySurface -> mySurface
+    java.lang.String screenShotFilename -> screenShotFilename
+    int nbElementParPage -> nbElementParPage
+    com.softwaresemantics.diyglsllwp.LiveWallpaperPrefs prefs -> prefs
+    android.view.View glslView -> glslView
+    android.app.ProgressDialog progressDialog -> progressDialog
+    android.widget.ListAdapter mAdapter -> mAdapter
+    android.widget.ListView mList -> mList
+    android.os.Handler mHandler -> mHandler
+    boolean mFinishedStart -> mFinishedStart
+    java.lang.Runnable mRequestFocus -> mRequestFocus
+    android.widget.AdapterView$OnItemClickListener mOnClickListener -> mOnClickListener
+    android.widget.Button cancelButton -> cancelButton
+    android.widget.Button setAsLWPButton -> setAsLWPButton
+    com.badlogic.gdx.backends.android.AndroidApplicationConfiguration cfg -> cfg
     void onWindowFocusChanged(boolean) -> onWindowFocusChanged
-    void checkIfOnlineOrExit() -> i
+    void checkIfOnlineOrExit() -> checkIfOnlineOrExit
     void onResume() -> onResume
     void onCreate(android.os.Bundle) -> onCreate
-    void updateStatusLabel(java.lang.String) -> b
+    void updateStatusLabel(java.lang.String) -> updateStatusLabel
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    void updateGallery(int) -> d
-    void onListItemClick$42a3bb55(int) -> a
-    boolean isOnline() -> j
-    com.softwaresemantics.diyglsllwp.Entry[] getValues() -> c
-    void galleryUpdated(int) -> b
+    void showAproposDialog() -> showAproposDialog
+    void startPrefsLwpActivity() -> startPrefsLwpActivity
+    void updateGallery() -> updateGallery
+    void updateGallery(int) -> updateGallery
+    void onListItemClick(android.widget.ListView,android.view.View,int,long) -> onListItemClick
+    void setOwnLWP() -> setOwnLWP
+    boolean isOnline() -> isOnline
+    com.softwaresemantics.diyglsllwp.Entry[] getValues() -> getValues
+    void setValues(com.softwaresemantics.diyglsllwp.Entry[]) -> setValues
+    void galleryUpdated(int) -> galleryUpdated
     void onRestoreInstanceState(android.os.Bundle) -> onRestoreInstanceState
     void onDestroy() -> onDestroy
     void onPause() -> onPause
     void onContentChanged() -> onContentChanged
-    void setListAdapter(android.widget.ListAdapter) -> a
-    void setSelection(int) -> e
-    void ensureList() -> k
-    void runShaderinPreview(java.lang.String) -> a
-    void createGDXPreview(java.lang.String) -> c
-    void showButtonForSelection(int) -> c
-    java.io.File saveCurrentSelectedShader() -> d
-    java.io.File saveCurrentSelectedShader(java.io.File,java.lang.String) -> a
-    void openCurrentSelectedShaderInSystemEditor() -> e
-    void cancelSelectionIfAny() -> l
-    void setupFullScreenView() -> f
-    void setAsLWP() -> g
-    void doProcessScreenShot() -> b
-    void hideProgressDialog() -> h
+    void setListAdapter(android.widget.ListAdapter) -> setListAdapter
+    void setSelection(int) -> setSelection
+    int getSelectedItemPosition() -> getSelectedItemPosition
+    long getSelectedItemId() -> getSelectedItemId
+    android.widget.ListView getListView() -> getListView
+    android.widget.ListAdapter getListAdapter() -> getListAdapter
+    void ensureList() -> ensureList
+    void runShaderinPreview(java.lang.String) -> runShaderinPreview
+    void createGDXPreview(java.lang.String) -> createGDXPreview
+    void hidePreviousSelectionButton() -> hidePreviousSelectionButton
+    void showButtonForSelection(int) -> showButtonForSelection
+    java.io.File saveCurrentSelectedShader() -> saveCurrentSelectedShader
+    java.io.File saveCurrentSelectedShaderAsLWP() -> saveCurrentSelectedShaderAsLWP
+    java.io.File saveCurrentSelectedShader(java.io.File,java.lang.String) -> saveCurrentSelectedShader
+    void openCurrentSelectedShaderInSystemEditor() -> openCurrentSelectedShaderInSystemEditor
+    void cancelSelectionIfAny() -> cancelSelectionIfAny
+    void saveScreenshot() -> saveScreenshot
+    void saveAsJpeg(com.badlogic.gdx.files.FileHandle,com.badlogic.gdx.graphics.Pixmap) -> saveAsJpeg
+    com.badlogic.gdx.graphics.Pixmap getScreenshot(int,int,int,int,boolean) -> getScreenshot
+    void setupFullScreenView() -> setupFullScreenView
+    void backToMainView() -> backToMainView
+    void setAsLWP() -> setAsLWP
+    void doProcessScreenShot() -> doProcessScreenShot
+    void hideProgressDialog() -> hideProgressDialog
     void onRestart() -> onRestart
     void onStart() -> onStart
     void onStop() -> onStop
-    void onClick$255f295() -> a
-    void access$0(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> a
-    int access$1(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> b
-    void access$2(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity,int) -> a
-    void access$3(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> c
-    void access$4(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> d
-    com.softwaresemantics.diyglsllwp.Entry[] access$5(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> e
-    void access$6$4e2e0c6a(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> f
-    int access$7(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> g
-    void access$8(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity,int) -> b
-    void access$9(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> h
-com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$1 -> com.softwaresemantics.diyglsllwp.w:
+    void onClick(int,int) -> onClick
+    void goToFullViewIfPossible() -> goToFullViewIfPossible
+    void onRequirementFailure(java.lang.String) -> onRequirementFailure
+    void onResumeGDX() -> onResumeGDX
+    void access$0(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> access$0
+    int access$1(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> access$1
+    void access$2(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity,int) -> access$2
+    void access$3(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> access$3
+    void access$4(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> access$4
+    void access$5(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity,int) -> access$5
+    int access$6(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> access$6
+    void access$7(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity,int) -> access$7
+    void access$8(com.softwaresemantics.diyglsllwp.ShaderGalleryActivity) -> access$8
+com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$1 -> com.softwaresemantics.diyglsllwp.o:
     com.softwaresemantics.diyglsllwp.ShaderGalleryActivity this$0 -> a
     void run() -> run
-com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$2 -> com.softwaresemantics.diyglsllwp.x:
+com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$2 -> com.softwaresemantics.diyglsllwp.p:
     com.softwaresemantics.diyglsllwp.ShaderGalleryActivity this$0 -> a
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$3 -> com.softwaresemantics.diyglsllwp.y:
+com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$3 -> com.softwaresemantics.diyglsllwp.q:
     com.softwaresemantics.diyglsllwp.ShaderGalleryActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$4 -> com.softwaresemantics.diyglsllwp.z:
+com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$4 -> com.softwaresemantics.diyglsllwp.s:
     com.softwaresemantics.diyglsllwp.ShaderGalleryActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$5 -> com.softwaresemantics.diyglsllwp.aa:
+com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$5 -> com.softwaresemantics.diyglsllwp.t:
     com.softwaresemantics.diyglsllwp.ShaderGalleryActivity this$0 -> a
-    void inputValue(java.lang.String) -> a
-com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$6 -> com.softwaresemantics.diyglsllwp.ab:
+    void inputValue(java.lang.String) -> inputValue
+com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$6 -> com.softwaresemantics.diyglsllwp.u:
     com.softwaresemantics.diyglsllwp.ShaderGalleryActivity this$0 -> a
-    void inputValue(java.lang.String) -> a
-com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$7 -> com.softwaresemantics.diyglsllwp.ac:
-    com.softwaresemantics.diyglsllwp.ShaderGalleryActivity this$0 -> a
-    void onClick(android.view.View) -> onClick
-com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$8 -> com.softwaresemantics.diyglsllwp.ad:
+    void inputValue(java.lang.String) -> inputValue
+com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$7 -> com.softwaresemantics.diyglsllwp.v:
     com.softwaresemantics.diyglsllwp.ShaderGalleryActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$UIFullViewRunnable -> com.softwaresemantics.diyglsllwp.ae:
+com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$8 -> com.softwaresemantics.diyglsllwp.w:
+    com.softwaresemantics.diyglsllwp.ShaderGalleryActivity this$0 -> a
+    void onClick(android.view.View) -> onClick
+com.softwaresemantics.diyglsllwp.ShaderGalleryActivity$UIFullViewRunnable -> com.softwaresemantics.diyglsllwp.x:
     com.softwaresemantics.diyglsllwp.ShaderGalleryActivity parentActivity -> b
     com.softwaresemantics.diyglsllwp.ShaderGalleryActivity this$0 -> a
     void run() -> run
-com.softwaresemantics.diyglsllwp.ShaderStorage -> com.softwaresemantics.diyglsllwp.af:
-    java.io.File getDiyGlslLwpSubDir(android.content.Context,java.lang.String) -> a
+com.softwaresemantics.diyglsllwp.ShaderProgram -> com.softwaresemantics.diyglsllwp.ShaderProgram:
+    java.lang.String fragShaderText -> fragShaderText
+    java.lang.String vertShaderText -> vertShaderText
+    java.lang.String getFragShaderText() -> getFragShaderText
+    void setFragShaderText(java.lang.String) -> setFragShaderText
+    java.lang.String getVertShaderText() -> getVertShaderText
+    void setVertShaderText(java.lang.String) -> setVertShaderText
+com.softwaresemantics.diyglsllwp.ShaderStorage -> com.softwaresemantics.diyglsllwp.ShaderStorage:
+    java.lang.String JPG -> JPG
+    java.lang.String TXT -> TXT
+    java.lang.String LWP -> LWP
+    java.lang.String LWP_TXT -> LWP_TXT
+    java.lang.String LWP_DIR_NAME -> LWP_DIR_NAME
+    java.io.File getDiyGlslLwpShaderDir(android.content.Context) -> getDiyGlslLwpShaderDir
+    java.io.File getDiyGlslLwpShaderFile(android.content.Context) -> getDiyGlslLwpShaderFile
+    java.io.File getCustomShaderLWPFile(android.content.Context) -> getCustomShaderLWPFile
+    java.io.File getDiyGlslLwpDir(android.content.Context) -> getDiyGlslLwpDir
+    java.io.File getDiyGlslLwpSubDir(android.content.Context,java.lang.String) -> getDiyGlslLwpSubDir
 org.jsoup.Connection -> org.jsoup.Connection:
     org.jsoup.Connection url(java.net.URL) -> url
     org.jsoup.Connection url(java.lang.String) -> url

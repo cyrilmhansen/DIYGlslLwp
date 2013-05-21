@@ -15,7 +15,6 @@ package com.softwaresemantics.diyglsllwp;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.android.AndroidWallpaperListener;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -28,11 +27,9 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
-
 import com.badlogic.gdx.math.Vector2;
 
-public class DIYGslSurface implements ApplicationListener,
-		AndroidWallpaperListener, GestureListener {
+public class DIYGslSurface implements ApplicationListener, GestureListener {
 
 	private static final String OPEN_GL_ES_2_0_REQUIRED = "OpenGL ES 2.0 required";
 
@@ -72,6 +69,8 @@ public class DIYGslSurface implements ApplicationListener,
 
 	private float mouseCursorX;
 	private float mouseCursorY;
+
+	private long timeOrigin;
 
 	private float time;
 
@@ -131,7 +130,8 @@ public class DIYGslSurface implements ApplicationListener,
 	}
 
 	public void updateShader(String shaderGLSL) {
-		this.shaderProgram = shaderGLSL;
+		// force mediump for float uniforms
+		this.shaderProgram = shaderGLSL.replaceAll("uniform float", "uniform mediump float");
 
 		setupShader();
 	}
@@ -163,7 +163,7 @@ public class DIYGslSurface implements ApplicationListener,
 			}
 		}
 
-		Gdx.graphics.setVSync(true);
+		// Gdx.graphics.setVSync(true);
 
 		Gdx.input.setInputProcessor(new GestureDetector(this));
 
@@ -225,6 +225,7 @@ public class DIYGslSurface implements ApplicationListener,
 		}
 
 		mesh = genFullViewRectangle();
+		timeOrigin = System.currentTimeMillis();
 	}
 
 	public void render() {
@@ -250,8 +251,6 @@ public class DIYGslSurface implements ApplicationListener,
 			return;
 		}
 
-		time += Gdx.graphics.getRawDeltaTime();
-
 		initRenderFramebufferIfNeeded();
 
 		// we do not render all frames in time dithering mode
@@ -269,7 +268,7 @@ public class DIYGslSurface implements ApplicationListener,
 			// like in web gallery
 			m_fbo.begin();
 
-			Gdx.gl20.glClearColor(0, 0, 0, 1);
+			// Gdx.gl20.glClearColor(0, 0, 0, 0);
 			Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 			renderShaderonMesh();
@@ -302,6 +301,7 @@ public class DIYGslSurface implements ApplicationListener,
 		// in all cases
 		if (showFPS) {
 			batch.begin();
+			font.draw(batch, "time:" + time, Gdx.graphics.getWidth() - 250, 15);
 			font.draw(batch, "FPS:" + Gdx.graphics.getFramesPerSecond(),
 					Gdx.graphics.getWidth() - 60, 15);
 			batch.end();
@@ -316,8 +316,9 @@ public class DIYGslSurface implements ApplicationListener,
 				screenshotProc.doProcessScreenShot();
 			} catch (Exception ex) {
 				Gdx.app.log(DO_PROCESS_SCREEN_SHOT, ex.getLocalizedMessage());
+			} finally {
+				doscreenShotRequest = false;
 			}
-			doscreenShotRequest = false;
 		}
 
 	}
@@ -400,11 +401,13 @@ public class DIYGslSurface implements ApplicationListener,
 	 */
 	private void renderShaderonMesh() {
 
+
 		shader.begin();
 
 		shader.setUniformf("resolution", renderSurfaceWidth,
 				renderSurfaceHeight);
 
+		time = (float) ((System.currentTimeMillis() - timeOrigin) / 1000.0d);
 		shader.setUniformf("time", time);
 		shader.setUniformf("mouse", mouseCursorX, mouseCursorY);
 
@@ -475,7 +478,7 @@ public class DIYGslSurface implements ApplicationListener,
 	 * handler for android dispose event
 	 */
 	public void dispose() {
-
+		freeRessourcesIfAny();
 	}
 
 	/**
@@ -497,18 +500,23 @@ public class DIYGslSurface implements ApplicationListener,
 		}
 		m_fboRegion = null;
 
-		batch.dispose();
+		// batch.dispose();
 	}
 
 	/**
 	 * handler for android resume event
 	 */
 	public void resume() {
-		
+
 		Gdx.app.log("DIYGslSurface", "resume called");
-		
+		//System.gc();
+
+		if (nativeCallback != null) {
+			nativeCallback.onResumeGDX();
+		}
+
 		// use native callback to force recreation of the whole context
-		
+
 		// Force recreation of buffers
 		m_fbo = null;
 
@@ -635,17 +643,17 @@ public class DIYGslSurface implements ApplicationListener,
 
 	}
 
-	@Override
-	public void offsetChange(float xOffset, float yOffset, float xOffsetStep,
-			float yOffsetStep, int xPixelOffset, int yPixelOffset) {
-
-		// Translation management need fragment shader support
-		// By default shader uses screen coordinates, which are fixed.
-
-		// offset can be provided as a custom attribute, but the shader must use
-		// it.
-
-	}
+	// @Override
+	// public void offsetChange(float xOffset, float yOffset, float xOffsetStep,
+	// float yOffsetStep, int xPixelOffset, int yPixelOffset) {
+	//
+	// // Translation management need fragment shader support
+	// // By default shader uses screen coordinates, which are fixed.
+	//
+	// // offset can be provided as a custom attribute, but the shader must use
+	// // it.
+	//
+	// }
 
 	public void addNativeCallback(NativeCallback callback) {
 		this.nativeCallback = callback;

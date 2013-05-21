@@ -40,5 +40,6 @@
     <string name="quit">Quitter</string>
     <string name="ok">OK</string>
     <string name="openGLRequirementsFailure">OpenGL 2 ES requis</string>
+    <string name="diyglsllwp_lwp_desc">Fond animé utilisant un shader personalisé chargé depuis le stockage externe (sdext)</string>
 
 </resources>
