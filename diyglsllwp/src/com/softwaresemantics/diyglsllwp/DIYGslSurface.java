@@ -131,7 +131,8 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 
 	public void updateShader(String shaderGLSL) {
 		// force mediump for float uniforms
-		this.shaderProgram = shaderGLSL.replaceAll("uniform float", "uniform mediump float");
+		this.shaderProgram = shaderGLSL.replaceAll("uniform float",
+				"uniform mediump float");
 
 		setupShader();
 	}
@@ -401,7 +402,6 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	 */
 	private void renderShaderonMesh() {
 
-
 		shader.begin();
 
 		shader.setUniformf("resolution", renderSurfaceWidth,
@@ -491,13 +491,16 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	private void freeRessourcesIfAny() {
 
 		// Free shader
-		shader.dispose();
+		if (shader != null) {
+			shader.dispose();
+		}
 
 		// Free ressources if any used
 		if (m_fbo != null) {
 			m_fbo.dispose();
 			m_fbo = null;
 		}
+		
 		m_fboRegion = null;
 
 		// batch.dispose();
@@ -509,7 +512,7 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	public void resume() {
 
 		Gdx.app.log("DIYGslSurface", "resume called");
-		//System.gc();
+		// System.gc();
 
 		if (nativeCallback != null) {
 			nativeCallback.onResumeGDX();
