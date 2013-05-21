@@ -16,7 +16,7 @@
         android:layout_marginLeft="4px"
         android:layout_marginRight="10px"
         android:layout_marginTop="4px"
-        android:src="@drawable/ic_diyglsllwp" >
+        android:src="@drawable/loading" >
     </ImageView>
 
     <TextView

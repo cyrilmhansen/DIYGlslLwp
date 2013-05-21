@@ -31,7 +31,7 @@
     <string name="loadingGalleryPage">Loading Page #</string>
     <string name="loadingShader">Loading Shader #</string>
     <string name="manualSelectLWP">Manual action required - Select DIY Glsl LWP</string>
-    <string name="errorLaunchingLWPSelector">Error while launching wallpaper selector</string>
+    <string name="errorLaunchingLWPSelector">Error while launching wallpaper selector - please set wallpaper manually</string>
     <string name="unableAccessExtStorage">Unable to access external storage (SD)</string>
     <string name="cancel">Cancel</string>
     <string name="setAsLWP">Set as Wallpaper</string>

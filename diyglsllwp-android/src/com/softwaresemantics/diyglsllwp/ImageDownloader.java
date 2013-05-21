@@ -31,10 +31,11 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
@@ -55,15 +56,21 @@ import android.widget.ImageView;
  * performance.
  * 
  * 
- * Adapted from 
+ * Adapted from
  */
 public class ImageDownloader {
 	private static final String LOG_TAG = "ImageDownloader";
-	
+
 	private static final int HARD_CACHE_CAPACITY = 100;
 	private static final int DELAY_BEFORE_PURGE = 120 * 1000; // in milliseconds
-	
+
 	final int IO_BUFFER_SIZE = 16 * 1024;
+
+	private static Context context;
+
+	public ImageDownloader(Context context) {
+		ImageDownloader.context = context;
+	}
 
 	/**
 	 * Download the specified image from the Internet and binds it to the
@@ -111,7 +118,7 @@ public class ImageDownloader {
 			BitmapDownloaderTask task = new BitmapDownloaderTask(imageView);
 			DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
 			imageView.setImageDrawable(downloadedDrawable);
-			//imageView.setMinimumHeight(156);
+			// imageView.setMinimumHeight(156);
 			task.execute(url);
 		}
 	}
@@ -158,9 +165,9 @@ public class ImageDownloader {
 
 	Bitmap downloadBitmap(String url) {
 
-
 		// AndroidHttpClient is not allowed to be used from the main thread
-		final HttpClient client = AndroidHttpClient.newInstance("Android-Diyglsllwp");
+		final HttpClient client = AndroidHttpClient
+				.newInstance("Android-Diyglsllwp");
 		final HttpGet getRequest = new HttpGet(url);
 
 		try {
@@ -289,13 +296,22 @@ public class ImageDownloader {
 	 * download finish order.
 	 * </p>
 	 */
-	static class DownloadedDrawable extends ColorDrawable {
+	static class DownloadedDrawable extends BitmapDrawable {
 		private final WeakReference<BitmapDownloaderTask> bitmapDownloaderTaskReference;
 
 		public DownloadedDrawable(BitmapDownloaderTask bitmapDownloaderTask) {
-			super(Color.BLACK);
+			super(getLoadingBitmap());
+
 			bitmapDownloaderTaskReference = new WeakReference<BitmapDownloaderTask>(
 					bitmapDownloaderTask);
+		}
+
+		private static Bitmap getLoadingBitmap() {
+			InputStream is = context.getResources().openRawResource(
+					R.drawable.loading);
+			Bitmap iconBitmap = BitmapFactory.decodeStream(is);
+			
+			return iconBitmap;
 		}
 
 		public BitmapDownloaderTask getBitmapDownloaderTask() {
@@ -303,15 +319,12 @@ public class ImageDownloader {
 		}
 	}
 
-
 	/*
 	 * Cache-related fields and methods.
 	 * 
 	 * We use a hard and a soft cache. A soft reference cache is too
 	 * aggressively cleared by the Garbage Collector.
 	 */
-
-
 
 	// Hard cache, with a fixed maximum capacity and a life duration
 	private final HashMap<String, Bitmap> sHardBitmapCache = new LinkedHashMap<String, Bitmap>(

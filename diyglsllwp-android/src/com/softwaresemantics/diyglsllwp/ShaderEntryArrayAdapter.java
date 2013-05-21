@@ -28,12 +28,14 @@ public class ShaderEntryArrayAdapter extends ArrayAdapter<Entry> {
 	private final Context context;
 	private final Entry[] values;
 
-	private static final ImageDownloader imageDownloader = new ImageDownloader();
+	private static ImageDownloader imageDownloader;
 
 	public ShaderEntryArrayAdapter(Context context, Entry[] values) {
 		super(context, R.layout.rowlayout, values);
 		this.context = context;
 		this.values = values;
+		
+		imageDownloader = new ImageDownloader(context);
 	}
 
 	@Override

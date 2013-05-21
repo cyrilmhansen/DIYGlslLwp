@@ -31,7 +31,7 @@
     <string name="loadingGalleryPage">Chargement Gallerie Page #</string>
     <string name="loadingShader">Chargement Shader #</string>
     <string name="manualSelectLWP">Action manuelle requise - Selectionner DIY Glsl LWP</string>
-    <string name="errorLaunchingLWPSelector">Erreur au lancement du sélecteur de fond animé</string>
+    <string name="errorLaunchingLWPSelector">Erreur au lancement du sélecteur de fond animé - merci de l\'activer manuellement</string>
     <string name="unableAccessExtStorage">Accès impossible au stockage externe (carte SD)</string>
     <string name="cancel">Annuler</string>
     <string name="setAsLWP">Choisir comme fond d\'écran</string>
