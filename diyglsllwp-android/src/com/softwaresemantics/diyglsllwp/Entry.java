@@ -13,13 +13,13 @@
  ******************************************************************************/
 package com.softwaresemantics.diyglsllwp;
 
-import android.graphics.Bitmap;
 
 public class Entry {
 
 	private static final String WAITING_FOR_DOWNLOAD = "waiting for download";
 	private String refId;
-	private Bitmap bmp;
+	private String url;
+	
 
 	private String description;
 	
@@ -38,13 +38,6 @@ public class Entry {
 		this.refId = refId;
 	}
 
-	public Bitmap getBmp() {
-		return bmp;
-	}
-
-	public void setBmp(Bitmap bmp) {
-		this.bmp = bmp;
-	}
 
 	public String getDescription() {
 		return description;
@@ -65,6 +58,14 @@ public class Entry {
 
 	public boolean isSelected() {
 		return selected;
+	}
+
+	public void setUrl(String imgURL) {
+		this.url = imgURL;		
+	}
+
+	public String getUrl() {
+		return url;
 	}
 
 	

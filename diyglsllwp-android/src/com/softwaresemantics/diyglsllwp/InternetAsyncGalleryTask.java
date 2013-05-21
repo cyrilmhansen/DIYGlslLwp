@@ -18,10 +18,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Base64;
 import android.util.Log;
 
 import com.github.kevinsawicki.http.HttpRequest;
@@ -31,8 +28,10 @@ public class InternetAsyncGalleryTask extends AsyncTask<String, Void, String> {
 	private ShaderGalleryActivity parentActivity;
 	private int askedPageIndex;
 
+
 	public InternetAsyncGalleryTask(ShaderGalleryActivity parentActivity,
 			int askedPageIndex) {
+		
 		this.parentActivity = parentActivity;
 		this.askedPageIndex = askedPageIndex;
 	}
@@ -52,22 +51,14 @@ public class InternetAsyncGalleryTask extends AsyncTask<String, Void, String> {
 				Elements imgs = link.getElementsByTag("img");
 				if (imgs.size() == 1) {
 
-					String img64 = imgs.get(0).attr("src");
-					int pos = img64.indexOf("base64,");
-					img64 = img64.substring(pos + 7);
-
-					// use std base64 decoder
-					byte[] bytes = Base64.decode(img64, Base64.DEFAULT);
-
-					// TODO : Check that this is resilient
-					Bitmap bMap = BitmapFactory.decodeByteArray(bytes, 0,
-							bytes.length);
-
-					// Store bitmap in mode
+					String imgURL = imgs.get(0).attr("src");
+				
+					// Store 50 results maximum - effective image download will only done if the image is visible
+					// thanks to the list adapter
 					if (position <= this.parentActivity.getValues().length - 1) {
 						String id = linkHref.substring(3);
 						this.parentActivity.getValues()[position].setRefId(id);
-						this.parentActivity.getValues()[position].setBmp(bMap);
+						this.parentActivity.getValues()[position].setUrl(imgURL);
 					}
 
 					position++;

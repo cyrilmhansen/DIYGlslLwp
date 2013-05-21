@@ -160,7 +160,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		super.onCreate(icicle);
 
 		LiveWallpaper.galleryAppInstance = this;
-		
+
 		// Create a new Handler that is being associated to the
 		// main thread.
 		handler = new Handler();
@@ -284,7 +284,9 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 						@Override
 						public void inputValue(String value) {
 							try {
-								values[0].setBmp(null);
+								// TODO use button just before preview area
+								// for now we use the first line, but the image
+								// is not in sync
 								new InternetAsyncShaderTask(
 										ShaderGalleryActivity.this, 0)
 										.execute(HTTP_GLSL_HEROKU_COM_ITEM
@@ -613,40 +615,36 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 
 		// TODO : settings for preview
 		DIYGslSurface.setRenderGuard(true);
-		
-		
-//		if (glslView == null &&  graphics != null) {
-//		
-//			// Second activity (ie Livewallpaper is active and running)
-//			// dispose ressources
-//			mySurface.dispose();
-//			graphics.clearManagedCaches();
-//			destroyGraphics();
-//
-////			if (getGraphicsView() instanceof GLSurfaceViewCupcake)
-////				((GLSurfaceViewCupcake) getGraphicsView()).onPause();
-////			if (getGraphicsView() instanceof android.opengl.GLSurfaceView)
-////				((android.opengl.GLSurfaceView) getGraphicsView()).onPause();
-//			
-//			// Maybe we should wait and dot the rest of the init in the first render call.. ??
-//		}
+
+		// if (glslView == null && graphics != null) {
+		//
+		// // Second activity (ie Livewallpaper is active and running)
+		// // dispose ressources
+		// mySurface.dispose();
+		// graphics.clearManagedCaches();
+		// destroyGraphics();
+		//
+		// // if (getGraphicsView() instanceof GLSurfaceViewCupcake)
+		// // ((GLSurfaceViewCupcake) getGraphicsView()).onPause();
+		// // if (getGraphicsView() instanceof android.opengl.GLSurfaceView)
+		// // ((android.opengl.GLSurfaceView) getGraphicsView()).onPause();
+		//
+		// // Maybe we should wait and dot the rest of the init in the first
+		// render call.. ??
+		// }
 
 		mySurface = new DIYGslSurface(code, true, 4, true, true, true, 4);
 		mySurface.setScreenshotProc(this);
 		// impossible to check immediately for GL20 / Surface is created
 		// asynchronously we had a callback to get a chance to notify the user
 		mySurface.addReqFailCallback(this);
-		
 
-		
 		glslView = initializeForView(mySurface, cfg);
-		
+
 		DIYGslSurface.setRenderGuard(false);
 
 		// Add callback for click in preview mode
 		mySurface.addClickHandler(this);
-
-
 
 		currentFragShaderProgram = code;
 

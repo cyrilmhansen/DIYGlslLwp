@@ -28,6 +28,8 @@ public class ShaderEntryArrayAdapter extends ArrayAdapter<Entry> {
 	private final Context context;
 	private final Entry[] values;
 
+	private static final ImageDownloader imageDownloader = new ImageDownloader();
+
 	public ShaderEntryArrayAdapter(Context context, Entry[] values) {
 		super(context, R.layout.rowlayout, values);
 		this.context = context;
@@ -41,21 +43,20 @@ public class ShaderEntryArrayAdapter extends ArrayAdapter<Entry> {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
-		rowView.setAlpha(1.0f);
+		//rowView.setAlpha(1.0f);
 
 		TextView textView = (TextView) rowView.findViewById(R.id.label);
-		textView.setAlpha(1.0f);
+		//textView.setAlpha(1.0f);
 
 		ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-		imageView.setAlpha(1.0f);
+		//imageView.setAlpha(1.0f);
 
 		textView.setText(values[position].toString());
 
-		if (values[position].getBmp() != null) {
-			imageView.setImageBitmap(values[position].getBmp());
-		} else {
-			imageView.setImageResource(android.R.drawable.spinner_background);
+		if (values[position].getUrl() != null) {
+			imageDownloader.download(values[position].getUrl(), imageView);
 		}
+
 
 		// All buttons are hidden initially
 		Button buttonViewFS = (Button) rowView.findViewById(R.id.buttonViewFS);
@@ -85,7 +86,8 @@ public class ShaderEntryArrayAdapter extends ArrayAdapter<Entry> {
 		buttonEdit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(context, "Launching Editor", Toast.LENGTH_SHORT).show();
+				Toast.makeText(context, "Launching Editor", Toast.LENGTH_SHORT)
+						.show();
 
 				((ShaderGalleryActivity) context)
 						.openCurrentSelectedShaderInSystemEditor();
@@ -97,7 +99,8 @@ public class ShaderEntryArrayAdapter extends ArrayAdapter<Entry> {
 		buttonDownload.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(context, "Processing Save request", Toast.LENGTH_SHORT).show();
+				Toast.makeText(context, "Processing Save request",
+						Toast.LENGTH_SHORT).show();
 
 				((ShaderGalleryActivity) context).saveCurrentSelectedShader();
 
