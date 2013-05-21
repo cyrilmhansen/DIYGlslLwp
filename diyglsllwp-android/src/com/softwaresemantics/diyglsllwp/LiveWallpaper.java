@@ -27,18 +27,17 @@ import android.widget.Toast;
 import com.badlogic.gdx.android.AndroidWallpaperListener;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidLiveWallpaperService;
-import com.badlogic.gdx.backends.android.CustomAndroidGDXApp;
 import com.badlogic.gdx.files.FileHandle;
 
 public class LiveWallpaper extends AndroidLiveWallpaperService implements
-		SharedPreferences.OnSharedPreferenceChangeListener {
+		SharedPreferences.OnSharedPreferenceChangeListener, NativeCallback {
 
 	private static final String RELOAD_SHADER = "RELOAD_SHADER";
 
 	private AndroidApplicationConfiguration config;
 	private String shaderGLSL = null;
 
-	private DIYGslSurface listener;
+	private DIYGslSurface lwpSurface;
 	private LiveWallpaperPrefs prefs;
 
 	static LiveWallpaper instance;
@@ -78,8 +77,8 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 			// Second activity (ie Livewallpaper is active and running)
 			// dispose ressources
 
-			Toast.makeText(this, "switch gallery -> LWP", Toast.LENGTH_LONG)
-					.show();
+			// Toast.makeText(this, "switch gallery -> LWP", Toast.LENGTH_LONG)
+			// .show();
 
 			galleryAppInstance.mySurface.dispose();
 			galleryAppInstance.getGraphics().clearManagedCaches();
@@ -104,7 +103,7 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 
 		if (shaderGLSL != null) {
 			Log.d("lwp", "new DIYGslSurface");
-			listener = new DIYGslSurface(shaderGLSL,
+			lwpSurface = new DIYGslSurface(shaderGLSL,
 					prefs.isReductionFactorEnabled(),
 					prefs.getReductionFactor(), prefs.isTouchEnabled(),
 					prefs.isDisplayFPSLWP(), prefs.isTimeDithering(),
@@ -112,15 +111,17 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 		} else {
 			// built in default shader
 			Log.d("lwp", "new DIYGslSurface default");
-			listener = new DIYGslSurface();
+			lwpSurface = new DIYGslSurface();
 		}
+
+		lwpSurface.addNativeCallback(this);
 
 		config = new AndroidApplicationConfiguration();
 		config.useGL20 = true;
 
 		Log.d("lwp", "initGDX LWP initialize");
 
-		initialize(listener, config);
+		initialize(lwpSurface, config);
 	}
 
 	// handler for shader change
@@ -135,8 +136,8 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 				Log.d("lwp", "reloadShader error");
 			}
 
-			if (listener != null && shaderGLSL != null) {
-				listener.updateShader(shaderGLSL);
+			if (lwpSurface != null && shaderGLSL != null) {
+				lwpSurface.updateShader(shaderGLSL);
 			}
 		} catch (Exception ex) {
 			Log.e("DiyGlslLWP", "reloadShader", ex);
@@ -162,10 +163,8 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 
 	protected void notifyCfgChange() {
 
-		// Log.d("lwp", "notifyCfgChange", new Exception());
-
-		if (listener != null) {
-			listener.updatePrefs(prefs.isReductionFactorEnabled(),
+		if (lwpSurface != null) {
+			lwpSurface.updatePrefs(prefs.isReductionFactorEnabled(),
 					prefs.getReductionFactor(), prefs.isTouchEnabled(),
 					prefs.isDisplayFPSLWP(), prefs.isTimeDithering(),
 					prefs.getTimeDitheringFactor());
@@ -235,6 +234,20 @@ public class LiveWallpaper extends AndroidLiveWallpaperService implements
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void onRequirementFailure(String msg) {
+		Toast.makeText(this,
+				getResources().getString(R.string.openGLRequirementsFailure),
+				Toast.LENGTH_LONG).show();
+	}
+
+	@Override
+	public void onResumeGDX() {
+		// Force full reinit for performance reason
+		// (cache problems in some opengl es implementations)
+		initGDX();
 	}
 
 }

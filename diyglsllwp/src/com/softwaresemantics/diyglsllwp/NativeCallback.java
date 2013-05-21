@@ -1,5 +1,6 @@
 package com.softwaresemantics.diyglsllwp;
 
-public interface ReqFailCallback {
+public interface NativeCallback {
 	public void onRequirementFailure(String msg);
+	public void onResumeGDX();
 }

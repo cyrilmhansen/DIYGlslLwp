@@ -16,12 +16,20 @@
 
 package com.softwaresemantics.diyglsllwp;
 
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,15 +42,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
 
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * This helper class download images from the Internet and binds those with the
  * provided ImageView.
@@ -54,9 +53,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  * A local cache of downloaded images is maintained internally to improve
  * performance.
+ * 
+ * 
+ * Adapted from 
  */
 public class ImageDownloader {
 	private static final String LOG_TAG = "ImageDownloader";
+	
+	private static final int HARD_CACHE_CAPACITY = 100;
+	private static final int DELAY_BEFORE_PURGE = 120 * 1000; // in milliseconds
+	
+	final int IO_BUFFER_SIZE = 16 * 1024;
 
 	/**
 	 * Download the specified image from the Internet and binds it to the
@@ -104,7 +111,7 @@ public class ImageDownloader {
 			BitmapDownloaderTask task = new BitmapDownloaderTask(imageView);
 			DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
 			imageView.setImageDrawable(downloadedDrawable);
-			imageView.setMinimumHeight(156);
+			//imageView.setMinimumHeight(156);
 			task.execute(url);
 		}
 	}
@@ -150,7 +157,7 @@ public class ImageDownloader {
 	}
 
 	Bitmap downloadBitmap(String url) {
-		final int IO_BUFFER_SIZE = 4 * 1024;
+
 
 		// AndroidHttpClient is not allowed to be used from the main thread
 		final HttpClient client = AndroidHttpClient.newInstance("Android-Diyglsllwp");
@@ -304,8 +311,7 @@ public class ImageDownloader {
 	 * aggressively cleared by the Garbage Collector.
 	 */
 
-	private static final int HARD_CACHE_CAPACITY = 100;
-	private static final int DELAY_BEFORE_PURGE = 60 * 1000; // in milliseconds
+
 
 	// Hard cache, with a fixed maximum capacity and a life duration
 	private final HashMap<String, Bitmap> sHardBitmapCache = new LinkedHashMap<String, Bitmap>(

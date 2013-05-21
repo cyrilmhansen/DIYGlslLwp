@@ -53,11 +53,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.badlogic.gdx.backends.android.AndroidGraphics;
 import com.badlogic.gdx.backends.android.CustomAndroidGDXApp;
-import com.badlogic.gdx.backends.android.surfaceview.GLSurfaceViewCupcake;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -73,7 +70,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
  */
 
 public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
-		ScreenshotProcessor, ClickHandler, ReqFailCallback {
+		ScreenshotProcessor, ClickHandler, NativeCallback {
 
 	private static final String HTTP_GLSL_HEROKU_COM_ITEM = "http://glsl.heroku.com/item/";
 
@@ -600,6 +597,8 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 
 	private Button setAsLWPButton;
 
+	private AndroidApplicationConfiguration cfg;
+
 	public void runShaderinPreview(String code) {
 		if (glslView != null) {
 			// Remove previously created view
@@ -609,35 +608,20 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 	}
 
 	private void createGDXPreview(String code) {
-		AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
+		cfg = new AndroidApplicationConfiguration();
 		cfg.useGL20 = true;
 		cfg.resolutionStrategy = new PreviewResStrategy(this, _200_PX);
 
 		// TODO : settings for preview
 		DIYGslSurface.setRenderGuard(true);
 
-		// if (glslView == null && graphics != null) {
-		//
-		// // Second activity (ie Livewallpaper is active and running)
-		// // dispose ressources
-		// mySurface.dispose();
-		// graphics.clearManagedCaches();
-		// destroyGraphics();
-		//
-		// // if (getGraphicsView() instanceof GLSurfaceViewCupcake)
-		// // ((GLSurfaceViewCupcake) getGraphicsView()).onPause();
-		// // if (getGraphicsView() instanceof android.opengl.GLSurfaceView)
-		// // ((android.opengl.GLSurfaceView) getGraphicsView()).onPause();
-		//
-		// // Maybe we should wait and dot the rest of the init in the first
-		// render call.. ??
-		// }
 
 		mySurface = new DIYGslSurface(code, true, 4, true, true, true, 4);
 		mySurface.setScreenshotProc(this);
+		
 		// impossible to check immediately for GL20 / Surface is created
 		// asynchronously we had a callback to get a chance to notify the user
-		mySurface.addReqFailCallback(this);
+		mySurface.addNativeCallback(this);
 
 		glslView = initializeForView(mySurface, cfg);
 
@@ -841,7 +825,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 			glayout.removeView(glslView);
 		}
 
-		AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
+		cfg = new AndroidApplicationConfiguration();
 		cfg.useGL20 = true;
 
 		// TODO more dynamic layout for this screen
@@ -885,6 +869,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		glayout.addView(setAsLWPButton);
 		glayout.addView(cancelButton);
 		glayout.addView(glslView, 0);
+	
 
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -969,6 +954,11 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 				Toast.LENGTH_LONG).show();
 		exit();
 
+	}
+
+	@Override
+	public void onResumeGDX() {
+		// do nothing in Gallery
 	}
 
 }

@@ -28,7 +28,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
-import com.badlogic.gdx.math.Matrix4;
+
 import com.badlogic.gdx.math.Vector2;
 
 public class DIYGslSurface implements ApplicationListener,
@@ -86,7 +86,7 @@ public class DIYGslSurface implements ApplicationListener,
 
 	private ClickHandler listener;
 
-	private ReqFailCallback reqFailCallback;
+	private NativeCallback nativeCallback;
 
 	private static boolean renderGuard = false;
 
@@ -156,8 +156,8 @@ public class DIYGslSurface implements ApplicationListener,
 		// GL 20 (GL2ES) Required
 		if (!Gdx.graphics.isGL20Available()) {
 			Gdx.app.log("DIYGslSurface", "isGL20Available returns false");
-			if (reqFailCallback != null) {
-				reqFailCallback.onRequirementFailure(null);
+			if (nativeCallback != null) {
+				nativeCallback.onRequirementFailure(null);
 				// The Android specific code will decide to quit or not
 				// Gdx.app.exit();
 			}
@@ -219,9 +219,9 @@ public class DIYGslSurface implements ApplicationListener,
 			}
 		}
 
-		if (shader == null && reqFailCallback != null) {
+		if (shader == null && nativeCallback != null) {
 			// Android code called to notify the error
-			reqFailCallback.onRequirementFailure(errorMsg);
+			nativeCallback.onRequirementFailure(errorMsg);
 		}
 
 		mesh = genFullViewRectangle();
@@ -282,10 +282,8 @@ public class DIYGslSurface implements ApplicationListener,
 			Gdx.app.log("GDX render", msg, ex);
 		}
 
-		// Mise à l'échelle
-
+		// scaled render
 		batch.begin();
-
 		try {
 			batch.disableBlending();
 			batch.draw(m_fboRegion, 0, 0, effectiveSurfaceWidth,
@@ -354,6 +352,11 @@ public class DIYGslSurface implements ApplicationListener,
 		return false;
 	}
 
+	/**
+	 * called in render only
+	 * 
+	 * in all other cases, we want to force full reinit for optimization reasons
+	 */
 	private void initRenderFramebufferIfNeeded() {
 		if (m_fbo == null) {
 			forceNewRenderBuffer();
@@ -387,7 +390,7 @@ public class DIYGslSurface implements ApplicationListener,
 		if (m_fbo != null) {
 			m_fbo.dispose();
 		}
-		
+
 		forceNewRenderBuffer();
 
 	}
@@ -501,6 +504,11 @@ public class DIYGslSurface implements ApplicationListener,
 	 * handler for android resume event
 	 */
 	public void resume() {
+		
+		Gdx.app.log("DIYGslSurface", "resume called");
+		
+		// use native callback to force recreation of the whole context
+		
 		// Force recreation of buffers
 		m_fbo = null;
 
@@ -514,7 +522,7 @@ public class DIYGslSurface implements ApplicationListener,
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 
-		initRenderFramebufferIfNeeded();
+		forceNewRenderBuffer();
 
 		setupShader();
 
@@ -639,8 +647,8 @@ public class DIYGslSurface implements ApplicationListener,
 
 	}
 
-	public void addReqFailCallback(ReqFailCallback callback) {
-		this.reqFailCallback = callback;
+	public void addNativeCallback(NativeCallback callback) {
+		this.nativeCallback = callback;
 	}
 
 	public static boolean isRenderGuard() {
