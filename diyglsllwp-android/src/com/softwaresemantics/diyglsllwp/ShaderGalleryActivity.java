@@ -59,6 +59,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask.UINotifier;
 
 /**
  * Main activity / view
@@ -101,9 +102,6 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 
 	private LinearLayout glayout;
 	private View rootMainView;
-	private Button visibleButtonViewFS;
-	private Button visibleButtonSave;
-	private Button visibleButtonEdit;
 
 	private int currentSelectedIndex = -1;
 
@@ -188,7 +186,8 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		}
 
 		// Try to to keep the UI fluid
-		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+		android.os.Process
+				.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 
 		nbElementParPage = 50;
 		values = new Entry[nbElementParPage];
@@ -230,9 +229,6 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 				new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						// Toast.makeText(ShaderGalleryActivity.this,
-						// "Processing previous page", Toast.LENGTH_SHORT)
-						// .show();
 						if (currentPageIndex > 0) {
 							askedPageIndex = currentPageIndex - 1;
 							cancelSelectionIfAny();
@@ -243,6 +239,8 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 
 		progressDialog = new ProgressDialog(this);
 		updateStatusLabel(getResources().getString(R.string.loadingStatus));
+
+		setupButtons();
 
 	}
 
@@ -280,9 +278,6 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 						@Override
 						public void inputValue(String value) {
 							try {
-								// TODO use button just before preview area
-								// for now we use the first line, but the image
-								// is not in sync
 								new InternetAsyncShaderTask(
 										ShaderGalleryActivity.this, 0)
 										.execute(HTTP_GLSL_HEROKU_COM_ITEM
@@ -330,6 +325,45 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		return false;
 	}
 
+	private void setupButtons() {
+		// All buttons are hidden initially
+		Button buttonViewFS = (Button) findViewById(R.id.buttonViewFS);
+		Button buttonDownload = (Button) findViewById(R.id.buttonDownload);
+		Button buttonEdit = (Button) findViewById(R.id.buttonEdit);
+
+		// Setup click handler unconditionally
+		buttonViewFS.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setupFullScreenView();
+			}
+		});
+
+		buttonEdit.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(ShaderGalleryActivity.this, "Launching Editor",
+						Toast.LENGTH_SHORT).show();
+
+				openCurrentSelectedShaderInSystemEditor();
+
+			}
+
+		});
+
+		buttonDownload.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(ShaderGalleryActivity.this,
+						"Processing Save request", Toast.LENGTH_SHORT).show();
+				saveCurrentSelectedShader();
+
+			}
+
+		});
+
+	}
+
 	private void showAproposDialog() {
 		AboutDialog about = new AboutDialog(this);
 		about.setTitle(getResources().getString(R.string.aPropos));
@@ -367,7 +401,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		Entry item = (Entry) getListAdapter().getItem(position);
 
-		hidePreviousSelectionButton();
+		// hidePreviousSelectionButton();
 
 		progressDialog.setMessage(getResources().getString(
 				R.string.loadingShader)
@@ -389,16 +423,13 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 
 		// try the new Jelly Bean direct android wallpaper chooser first
 		try {
-			ComponentName component = new ComponentName(LiveWallpaperService.class
-					.getPackage().getName(),
+			ComponentName component = new ComponentName(
+					LiveWallpaperService.class.getPackage().getName(),
 					LiveWallpaperService.class.getCanonicalName());
 			intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
 			intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
 					component);
 			startActivityForResult(intent, REQUEST_SET_LIVE_WALLPAPER);
-
-			// Toast.makeText(ShaderGalleryActivity.this,
-			// "Live wallpaper activated", Toast.LENGTH_SHORT).show();
 
 		} catch (android.content.ActivityNotFoundException e3) {
 			// try the generic android wallpaper chooser next
@@ -598,6 +629,8 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 
 	private AndroidApplicationConfiguration cfg;
 
+	private Toast toast;
+
 	public void runShaderinPreview(String code) {
 		if (glslView != null) {
 			// Remove previously created view
@@ -614,13 +647,13 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		// TODO : settings for preview
 		DIYGslSurface.setRenderGuard(true);
 
-
-		mySurface = new DIYGslSurface(code, true, 4, true, true, true, 4);
+		mySurface = new DIYGslSurface(code, true, 4, true, true, true, 4, true,
+				60, true);
 		mySurface.setScreenshotProc(this);
-		
+
 		// impossible to check immediately for GL20 / Surface is created
 		// asynchronously we had a callback to get a chance to notify the user
-		mySurface.addNativeCallback(this);
+		mySurface.setNativeCallback(this);
 
 		glslView = initializeForView(mySurface, cfg);
 
@@ -634,21 +667,6 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		glayout.addView(glslView, 0);
 	}
 
-	public void hidePreviousSelectionButton() {
-		if (visibleButtonViewFS != null) {
-			visibleButtonViewFS.setVisibility(View.INVISIBLE);
-			visibleButtonViewFS = null;
-		}
-		if (visibleButtonSave != null) {
-			visibleButtonSave.setVisibility(View.INVISIBLE);
-			visibleButtonSave = null;
-		}
-		if (visibleButtonEdit != null) {
-			visibleButtonEdit.setVisibility(View.INVISIBLE);
-			visibleButtonEdit = null;
-		}
-	}
-
 	public void showButtonForSelection(int rowIndex) {
 		cancelSelectionIfAny();
 
@@ -658,7 +676,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		// method "copied" from ListActivity maybe to be refactored here
 		setSelection(rowIndex);
 
-		// Mode changes will be automatically handled bu the UI
+		// Mode changes will be automatically handled by the UI
 		onContentChanged();
 	}
 
@@ -835,7 +853,10 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		mySurface = new DIYGslSurface(currentFragShaderProgram,
 				prefs.isReductionFactorEnabled(), prefs.getReductionFactor(),
 				true, true, prefs.isTimeDithering(),
-				prefs.getTimeDitheringFactor());
+				prefs.getTimeDitheringFactor(),
+				prefs.getTimeLoopPeriod() != null,
+				prefs.getTimeLoopPeriod() != null ? prefs.getTimeLoopPeriod()
+						: 60, prefs.isForceMediumP());
 
 		glslView = initializeForView(mySurface, cfg);
 
@@ -868,7 +889,6 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		glayout.addView(setAsLWPButton);
 		glayout.addView(cancelButton);
 		glayout.addView(glslView, 0);
-	
 
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -958,6 +978,32 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 	@Override
 	public void onResumeGDX() {
 		// do nothing in Gallery
+	}
+
+	@Override
+	public void notifyCompilationEnd() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (toast != null) {
+					toast.cancel();
+				}
+			}
+		});
+	}
+
+	@Override
+	public void notifyCompilation() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				toast = Toast.makeText(ShaderGalleryActivity.this,
+						getResources().getString(R.string.processingShader),
+						Toast.LENGTH_LONG);
+				toast.show();
+			}
+		});
+
 	}
 
 }

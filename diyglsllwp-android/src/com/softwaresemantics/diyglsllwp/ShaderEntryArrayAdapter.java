@@ -16,13 +16,10 @@ package com.softwaresemantics.diyglsllwp;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ShaderEntryArrayAdapter extends ArrayAdapter<Entry> {
 	private final Context context;
@@ -60,56 +57,7 @@ public class ShaderEntryArrayAdapter extends ArrayAdapter<Entry> {
 		}
 
 
-		// All buttons are hidden initially
-		Button buttonViewFS = (Button) rowView.findViewById(R.id.buttonViewFS);
-		Button buttonDownload = (Button) rowView
-				.findViewById(R.id.buttonDownload);
-		Button buttonEdit = (Button) rowView.findViewById(R.id.buttonEdit);
-
-		// beware : lines in ListActivity are recycled, boolean are not always
-		// false by default
-		int buttonVisibility = values[position].isSelected() ? View.VISIBLE
-				: View.INVISIBLE;
-
-		buttonViewFS.setVisibility(buttonVisibility);
-		buttonDownload.setVisibility(buttonVisibility);
-		buttonEdit.setVisibility(buttonVisibility);
-
-		// Setup click handler unconditionally
-
-		buttonViewFS.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				((ShaderGalleryActivity) context).setupFullScreenView();
-
-			}
-		});
-
-		buttonEdit.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(context, "Launching Editor", Toast.LENGTH_SHORT)
-						.show();
-
-				((ShaderGalleryActivity) context)
-						.openCurrentSelectedShaderInSystemEditor();
-
-			}
-
-		});
-
-		buttonDownload.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(context, "Processing Save request",
-						Toast.LENGTH_SHORT).show();
-
-				((ShaderGalleryActivity) context).saveCurrentSelectedShader();
-
-			}
-
-		});
-
+	
 		return rowView;
 	}
 }

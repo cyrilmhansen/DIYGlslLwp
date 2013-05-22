@@ -28,28 +28,28 @@
         android:textSize="18sp" >        
     </TextView>
 
-    <Button
-        android:id="@+id/buttonViewFS"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="@string/viewFS" />
+<!--     <Button -->
+<!--         android:id="@+id/buttonViewFS" -->
+<!--         style="?android:attr/buttonStyleSmall" -->
+<!--         android:layout_width="fill_parent" -->
+<!--         android:layout_height="match_parent" -->
+<!--         android:layout_weight="1" -->
+<!--         android:text="@string/viewFS" /> -->
 
-    <Button
-        android:id="@+id/buttonEdit"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="@string/edit" />
+<!--     <Button -->
+<!--         android:id="@+id/buttonEdit" -->
+<!--         style="?android:attr/buttonStyleSmall" -->
+<!--         android:layout_width="fill_parent" -->
+<!--         android:layout_height="match_parent" -->
+<!--         android:layout_weight="1" -->
+<!--         android:text="@string/edit" /> -->
 
-    <Button
-        android:id="@+id/buttonDownload"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="@string/download" />
+<!--     <Button -->
+<!--         android:id="@+id/buttonDownload" -->
+<!--         style="?android:attr/buttonStyleSmall" -->
+<!--         android:layout_width="fill_parent" -->
+<!--         android:layout_height="match_parent" -->
+<!--         android:layout_weight="1" -->
+<!--         android:text="@string/download" /> -->
 
 </LinearLayout>

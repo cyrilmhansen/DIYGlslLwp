@@ -39,7 +39,9 @@
     <string name="aPropos">About this app</string>
     <string name="quit">Quit App</string>
     <string name="ok">OK</string>
-    <string name="openGLRequirementsFailure">OpenGL 2 ES required</string>    
+    <string name="openGLRequirementsFailure">OpenGL 2 ES required</string>
     <string name="diyglsllwp_lwp_desc">Live wallpaper using custom fragment shader on external storage</string>
-
+    <string name="timeLoop">Time Loop</string>
+    <string name="forceMediumPrecision">Force use of medium precision floats</string>
+    <string name="processingShader">Processing shader...</string>
 </resources>

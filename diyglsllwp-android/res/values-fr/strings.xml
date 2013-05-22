@@ -41,5 +41,8 @@
     <string name="ok">OK</string>
     <string name="openGLRequirementsFailure">OpenGL 2 ES requis</string>
     <string name="diyglsllwp_lwp_desc">Fond animé utilisant un shader personalisé chargé depuis le stockage externe (sdext)</string>
+    <string name="timeLoop">Bouclage temporel</string>
+    <string name="forceMediumPrecision">Force l\'usage de flottants de précision moyenne (mediump)</string>
+    <string name="processingShader">Traitement du shader</string>
 
 </resources>

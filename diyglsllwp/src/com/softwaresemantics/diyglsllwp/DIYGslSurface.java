@@ -64,6 +64,8 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	private float m_fboScaler = 1.0f;
 	private float epsilon = 0.00001f;
 
+	// TODO : offer option / preserve ratio or fit shader to screen / for now
+	// this is preserve ratio and truncate
 	private int effectiveSurfaceWidth;
 	private int effectiveSurfaceHeight;
 
@@ -87,6 +89,12 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 
 	private NativeCallback nativeCallback;
 
+	private boolean timeLoop;
+
+	private int timeLoopPeriod;
+
+	private boolean forceMediump;
+
 	private static boolean renderGuard = false;
 
 	// GL ES 2.0 is required
@@ -97,7 +105,8 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	/** detailed constructor */
 	public DIYGslSurface(String shaderGLSL, boolean reductionFactorEnabled,
 			int reductionFactor, boolean touchEnabled, boolean displayFPSLWP,
-			boolean timeDither, int timeDitherFactor) {
+			boolean timeDither, int timeDitherFactor, boolean timeLoop,
+			int timeLoopPeriod, boolean forceMediump) {
 
 		this.shaderProgram = shaderGLSL;
 		this.m_fboScaler = reductionFactor;
@@ -108,11 +117,16 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 		this.touchEnabled = touchEnabled;
 		this.showFPS = displayFPSLWP;
 
+		this.timeLoop = timeLoop;
+		this.timeLoopPeriod = timeLoopPeriod;
+		this.forceMediump = forceMediump;
+
 	}
 
 	public void updatePrefs(boolean reductionFactorEnabled,
 			int reductionFactor, boolean touchEnabled, boolean displayFPSLWP,
-			boolean timeDither, int timeDitherFactor) {
+			boolean timeDither, int timeDitherFactor, boolean timeLoop,
+			int timeLoopPeriod, boolean forceMediump) {
 
 		this.m_fboScaler = reductionFactor;
 
@@ -121,6 +135,15 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 
 		this.touchEnabled = touchEnabled;
 		this.showFPS = displayFPSLWP;
+
+		this.timeLoop = timeLoop;
+		this.timeLoopPeriod = timeLoopPeriod;
+
+		// change may require shader reload
+		if (this.forceMediump != forceMediump) {
+			this.forceMediump = forceMediump;
+			setupShader();
+		}
 
 		updateRenderSurfaceSize();
 
@@ -131,8 +154,7 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 
 	public void updateShader(String shaderGLSL) {
 		// force mediump for float uniforms
-		this.shaderProgram = shaderGLSL.replaceAll("uniform float",
-				"uniform mediump float");
+		this.shaderProgram = shaderGLSL;
 
 		setupShader();
 	}
@@ -164,7 +186,7 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 			}
 		}
 
-		// Gdx.graphics.setVSync(true);
+		Gdx.graphics.setVSync(true);
 
 		Gdx.input.setInputProcessor(new GestureDetector(this));
 
@@ -194,15 +216,25 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	}
 
 	private void setupShader() {
+		if (nativeCallback != null) {
+			nativeCallback.notifyCompilation();
+		}
 
 		// setup shader and required associated data structures
 
 		// setup verbose shader compile error messages
 		ShaderProgram.pedantic = false;
 
+		String effectiveFragShader = shaderProgram;
+
 		errorMsg = null;
 		if (shaderProgram != null) {
 			try {
+				if (forceMediump) {
+					effectiveFragShader = "precision mediump float;\n"
+							+ effectiveFragShader.replaceAll("uniform%sfloat",
+									"uniform mediump float");
+				}
 				shader = new CustomShader(shaderProgram);
 			} catch (Exception ex) {
 				// fall back to default shader
@@ -227,6 +259,10 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 
 		mesh = genFullViewRectangle();
 		timeOrigin = System.currentTimeMillis();
+
+		if (nativeCallback != null) {
+			nativeCallback.notifyCompilationEnd();
+		}
 	}
 
 	public void render() {
@@ -258,7 +294,7 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 		if (timeDithering) {
 			if (nbRender % timeDitheringFactor != 0) {
 				// don't clear view, don't render, don't process screenshots
-				// we need vsync to ensure some delay before next frame
+				// we need vsync to ensure some delay before next frame ??
 				return;
 			}
 		}
@@ -366,10 +402,9 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	}
 
 	private void forceNewRenderBuffer() {
-		// No alpha channel needed
-		m_fbo = new FrameBuffer(Format.RGB888,
-				(int) (effectiveSurfaceWidth / m_fboScaler),
-				(int) (effectiveSurfaceHeight / m_fboScaler), false);
+		// RGB888 = No alpha channel needed
+		m_fbo = new FrameBuffer(Format.RGB888, renderSurfaceWidth,
+				renderSurfaceHeight, false);
 		m_fboRegion = new TextureRegion(m_fbo.getColorBufferTexture());
 
 		// view is y flipped without this
@@ -383,18 +418,13 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 		this.effectiveSurfaceWidth = width;
 		this.effectiveSurfaceHeight = height;
 
-		renderSurfaceWidth = effectiveSurfaceWidth;
-		renderSurfaceHeight = effectiveSurfaceHeight;
-
-		renderSurfaceWidth /= m_fboScaler;
-		renderSurfaceHeight /= m_fboScaler;
+		updateRenderSurfaceSize();
 
 		if (m_fbo != null) {
 			m_fbo.dispose();
 		}
 
 		forceNewRenderBuffer();
-
 	}
 
 	/**
@@ -408,6 +438,12 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 				renderSurfaceHeight);
 
 		time = (float) ((System.currentTimeMillis() - timeOrigin) / 1000.0d);
+
+		// Process optional time loop
+		if (timeLoop && (time > timeLoopPeriod)) {
+			timeOrigin = timeOrigin + (timeLoopPeriod * 1000);
+		}
+
 		shader.setUniformf("time", time);
 		shader.setUniformf("mouse", mouseCursorX, mouseCursorY);
 
@@ -500,7 +536,7 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 			m_fbo.dispose();
 			m_fbo = null;
 		}
-		
+
 		m_fboRegion = null;
 
 		// batch.dispose();
@@ -512,13 +548,10 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	public void resume() {
 
 		Gdx.app.log("DIYGslSurface", "resume called");
-		// System.gc();
 
 		if (nativeCallback != null) {
 			nativeCallback.onResumeGDX();
 		}
-
-		// use native callback to force recreation of the whole context
 
 		// Force recreation of buffers
 		m_fbo = null;
@@ -646,19 +679,7 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 
 	}
 
-	// @Override
-	// public void offsetChange(float xOffset, float yOffset, float xOffsetStep,
-	// float yOffsetStep, int xPixelOffset, int yPixelOffset) {
-	//
-	// // Translation management need fragment shader support
-	// // By default shader uses screen coordinates, which are fixed.
-	//
-	// // offset can be provided as a custom attribute, but the shader must use
-	// // it.
-	//
-	// }
-
-	public void addNativeCallback(NativeCallback callback) {
+	public void setNativeCallback(NativeCallback callback) {
 		this.nativeCallback = callback;
 	}
 

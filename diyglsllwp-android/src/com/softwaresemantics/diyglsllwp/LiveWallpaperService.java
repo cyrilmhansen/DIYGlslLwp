@@ -42,6 +42,8 @@ public class LiveWallpaperService extends AndroidLiveWallpaperService implements
 
 	static LiveWallpaperService instance;
 	static ShaderGalleryActivity galleryAppInstance;
+	
+	
 
 	public void onCreateApplication() {
 		super.onCreateApplication();
@@ -110,14 +112,17 @@ public class LiveWallpaperService extends AndroidLiveWallpaperService implements
 					prefs.isReductionFactorEnabled(),
 					prefs.getReductionFactor(), prefs.isTouchEnabled(),
 					prefs.isDisplayFPSLWP(), prefs.isTimeDithering(),
-					prefs.getTimeDitheringFactor());
+					prefs.getTimeDitheringFactor(),
+					prefs.getTimeLoopPeriod() != null,
+					prefs.getTimeLoopPeriod() != null ? prefs
+							.getTimeLoopPeriod() : 60, prefs.isForceMediumP());
 		} else {
 			// built in default shader
 			Log.d("lwp", "new DIYGslSurface default");
 			lwpSurface = new DIYGslSurface();
 		}
 
-		lwpSurface.addNativeCallback(this);
+		lwpSurface.setNativeCallback(this);
 
 		config = new AndroidApplicationConfiguration();
 		config.useGL20 = true;
@@ -167,10 +172,16 @@ public class LiveWallpaperService extends AndroidLiveWallpaperService implements
 	protected void notifyCfgChange() {
 
 		if (lwpSurface != null) {
-			lwpSurface.updatePrefs(prefs.isReductionFactorEnabled(),
-					prefs.getReductionFactor(), prefs.isTouchEnabled(),
-					prefs.isDisplayFPSLWP(), prefs.isTimeDithering(),
-					prefs.getTimeDitheringFactor());
+			lwpSurface.updatePrefs(
+					prefs.isReductionFactorEnabled(),
+					prefs.getReductionFactor(),
+					prefs.isTouchEnabled(),
+					prefs.isDisplayFPSLWP(),
+					prefs.isTimeDithering(),
+					prefs.getTimeDitheringFactor(),
+					prefs.getTimeLoopPeriod() != null,
+					prefs.getTimeLoopPeriod() != null ? prefs
+							.getTimeLoopPeriod() : 60, prefs.isForceMediumP());
 		}
 
 	}
@@ -280,6 +291,19 @@ public class LiveWallpaperService extends AndroidLiveWallpaperService implements
 		// linkedEngine.onResume();
 		// }
 
+	}
+
+	@Override
+	public void notifyCompilationEnd() {
+		// if (toast != null) {
+		// toast.cancel();
+		// }
+	}
+
+	@Override
+	public void notifyCompilation() {
+//		toast = Toast.makeText(this, getResources().getString(R.string.processingShader), Toast.LENGTH_LONG);
+//		toast.show();
 	}
 
 }

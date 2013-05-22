@@ -23,5 +23,17 @@
         <item>"24"</item>
         <item>"32"</item>
     </string-array>
+    <string-array name="timeLoop">
+        <item>60 seconds</item>
+        <item>10 seconds</item>
+        <item>6 pi seconds</item>
+        <item>no loop</item>
+    </string-array>
+    <string-array name="timeLoopValues">
+        <item>"60"</item>
+        <item>"10"</item>
+        <item>"6pi"</item>
+        <item>"none"</item>
+    </string-array>
 
 </resources>

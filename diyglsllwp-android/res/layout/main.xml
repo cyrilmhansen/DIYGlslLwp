@@ -10,6 +10,38 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
+    
+     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        
+          <Button
+        android:id="@+id/buttonViewFS"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/viewFS" />
+
+    <Button
+        android:id="@+id/buttonEdit"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/edit" />
+
+    <Button
+        android:id="@+id/buttonDownload"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/download" />
+
+     
+    </LinearLayout>
+    
     <ListView
         android:id="@android:id/list"
         android:layout_width="wrap_content"
@@ -36,9 +68,9 @@
             android:layout_height="wrap_content"
             android:text="@string/previous_page" />
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+<!--         <Space -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="match_parent" /> -->
 
         <Button
             android:id="@+id/nextPageButton"

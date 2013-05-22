@@ -44,5 +44,20 @@
         android:key="timeDitheringFactor"
         android:title="@string/timeDitheringFactor" >
     </ListPreference>
+    
+    
+    <ListPreference
+        android:defaultValue="60"
+        android:entries="@array/timeLoop"
+        android:entryValues="@array/timeLoopValues"
+        android:key="timeLoop"
+        android:title="@string/timeLoop" >
+    </ListPreference>
+    
+     <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="forceMediump"
+        android:title="@string/forceMediumPrecision" >
+    </CheckBoxPreference>
 
 </PreferenceScreen>
