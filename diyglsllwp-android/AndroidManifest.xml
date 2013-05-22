@@ -8,7 +8,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.softwaresemantics.diyglsllwp"
     android:largeHeap="true"
-    android:versionCode="4"
+    android:versionCode="5"
     android:versionName="1.1" >
 
     <uses-feature android:name="android.software.live_wallpaper" />
