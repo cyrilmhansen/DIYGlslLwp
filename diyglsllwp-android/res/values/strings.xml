@@ -44,4 +44,6 @@
     <string name="timeLoop">Time Loop</string>
     <string name="forceMediumPrecision">Force use of medium precision floats</string>
     <string name="processingShader">Processing shader...</string>
+    <string name="speedFactor">Variable speed</string>
+    
 </resources>

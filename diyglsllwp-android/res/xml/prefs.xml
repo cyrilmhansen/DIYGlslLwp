@@ -59,5 +59,13 @@
         android:key="forceMediump"
         android:title="@string/forceMediumPrecision" >
     </CheckBoxPreference>
+    
+         <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/speedFactor"
+        android:entryValues="@array/speedFactorValues"
+        android:key="speedFactor"
+        android:title="@string/speedFactor" >
+    </ListPreference>
 
 </PreferenceScreen>

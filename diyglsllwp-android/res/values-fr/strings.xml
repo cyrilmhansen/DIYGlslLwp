@@ -44,5 +44,6 @@
     <string name="timeLoop">Bouclage temporel</string>
     <string name="forceMediumPrecision">Force l\'usage de flottants de précision moyenne (mediump)</string>
     <string name="processingShader">Traitement du shader</string>
+    <string name="speedFactor">Variateur de vitesse</string>
 
 </resources>

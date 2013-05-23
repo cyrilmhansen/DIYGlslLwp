@@ -42,8 +42,6 @@ public class LiveWallpaperService extends AndroidLiveWallpaperService implements
 
 	static LiveWallpaperService instance;
 	static ShaderGalleryActivity galleryAppInstance;
-	
-	
 
 	public void onCreateApplication() {
 		super.onCreateApplication();
@@ -115,7 +113,8 @@ public class LiveWallpaperService extends AndroidLiveWallpaperService implements
 					prefs.getTimeDitheringFactor(),
 					prefs.getTimeLoopPeriod() != null,
 					prefs.getTimeLoopPeriod() != null ? prefs
-							.getTimeLoopPeriod() : 60, prefs.isForceMediumP());
+							.getTimeLoopPeriod() : 60, prefs.isForceMediumP(),
+					prefs.getSpeedFactor());
 		} else {
 			// built in default shader
 			Log.d("lwp", "new DIYGslSurface default");
@@ -181,7 +180,8 @@ public class LiveWallpaperService extends AndroidLiveWallpaperService implements
 					prefs.getTimeDitheringFactor(),
 					prefs.getTimeLoopPeriod() != null,
 					prefs.getTimeLoopPeriod() != null ? prefs
-							.getTimeLoopPeriod() : 60, prefs.isForceMediumP());
+							.getTimeLoopPeriod() : 60, prefs.isForceMediumP(),
+					prefs.getSpeedFactor());
 		}
 
 	}
@@ -302,8 +302,10 @@ public class LiveWallpaperService extends AndroidLiveWallpaperService implements
 
 	@Override
 	public void notifyCompilation() {
-//		toast = Toast.makeText(this, getResources().getString(R.string.processingShader), Toast.LENGTH_LONG);
-//		toast.show();
+		// toast = Toast.makeText(this,
+		// getResources().getString(R.string.processingShader),
+		// Toast.LENGTH_LONG);
+		// toast.show();
 	}
 
 }

@@ -92,6 +92,8 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	private boolean timeLoop;
 
 	private int timeLoopPeriod;
+	
+	private float speedFactor = 1.0f;
 
 	private boolean forceMediump;
 
@@ -106,7 +108,9 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	public DIYGslSurface(String shaderGLSL, boolean reductionFactorEnabled,
 			int reductionFactor, boolean touchEnabled, boolean displayFPSLWP,
 			boolean timeDither, int timeDitherFactor, boolean timeLoop,
-			int timeLoopPeriod, boolean forceMediump) {
+			int timeLoopPeriod, boolean forceMediump, float speedFactor) {
+		
+		renderGuard = true;
 
 		this.shaderProgram = shaderGLSL;
 		this.m_fboScaler = reductionFactor;
@@ -120,13 +124,15 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 		this.timeLoop = timeLoop;
 		this.timeLoopPeriod = timeLoopPeriod;
 		this.forceMediump = forceMediump;
+		
+		this.speedFactor = speedFactor;
 
 	}
 
 	public void updatePrefs(boolean reductionFactorEnabled,
 			int reductionFactor, boolean touchEnabled, boolean displayFPSLWP,
 			boolean timeDither, int timeDitherFactor, boolean timeLoop,
-			int timeLoopPeriod, boolean forceMediump) {
+			int timeLoopPeriod, boolean forceMediump, float speedFactor) {
 
 		this.m_fboScaler = reductionFactor;
 
@@ -138,6 +144,8 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 
 		this.timeLoop = timeLoop;
 		this.timeLoopPeriod = timeLoopPeriod;
+		
+		this.speedFactor = speedFactor;
 
 		// change may require shader reload
 		if (this.forceMediump != forceMediump) {
@@ -165,6 +173,8 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	 * @param forcedShaderProgram
 	 */
 	public DIYGslSurface(String forcedShaderProgram) {
+		renderGuard = true;
+		
 		this.shaderProgram = forcedShaderProgram;
 	}
 
@@ -172,6 +182,7 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	 * Constructor with default params and shader (demo mode)
 	 */
 	public DIYGslSurface() {
+		renderGuard = true;
 	}
 
 	public void create() {
@@ -216,6 +227,7 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	}
 
 	private void setupShader() {
+		renderGuard = true;
 		if (nativeCallback != null) {
 			nativeCallback.notifyCompilation();
 		}
@@ -257,9 +269,11 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 			nativeCallback.onRequirementFailure(errorMsg);
 		}
 
+	
 		mesh = genFullViewRectangle();
+	
 		timeOrigin = System.currentTimeMillis();
-
+		renderGuard = false;
 		if (nativeCallback != null) {
 			nativeCallback.notifyCompilationEnd();
 		}
@@ -437,7 +451,7 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 		shader.setUniformf("resolution", renderSurfaceWidth,
 				renderSurfaceHeight);
 
-		time = (float) ((System.currentTimeMillis() - timeOrigin) / 1000.0d);
+		time = (float) ((System.currentTimeMillis() - timeOrigin) * speedFactor / 1000.0d);
 
 		// Process optional time loop
 		if (timeLoop && (time > timeLoopPeriod)) {
@@ -635,7 +649,7 @@ public class DIYGslSurface implements ApplicationListener, GestureListener {
 	 */
 	public boolean zoom(float initialDistance, float distance) {
 		if (touchEnabled) {
-			float scaleInv = initialDistance / distance;
+			// float scaleInv = initialDistance / distance;
 			// projectionUser.scale(scale, scale, 1.0f);
 			// cam.zoom *= scaleInv;
 			return true;

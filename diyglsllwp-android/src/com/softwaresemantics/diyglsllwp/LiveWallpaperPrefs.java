@@ -27,6 +27,10 @@ public class LiveWallpaperPrefs {
 
 	private static final String TIME_DITHERING_FACTOR = "timeDitheringFactor";
 	private static final String TIME_DITHERING = "timeDithering";
+
+	private static final String SPEED_FACTOR = "speedFactor";
+	private static final String SPEED_FACTOR_DEFAULT = "1";
+
 	private static final String REDUCTION_FACTOR = "reductionFactor";
 	private static final String TOUCH = "touch";
 	private static final String DISPLAY_FPS_LWP = "displayFPSLWP";
@@ -70,6 +74,11 @@ public class LiveWallpaperPrefs {
 	public int getReductionFactor() {
 		return Integer.valueOf(prefs.getString(REDUCTION_FACTOR,
 				REDUCTION_FACTOR_8));
+	}
+
+	public float getSpeedFactor() {
+		return Float.valueOf(prefs
+				.getString(SPEED_FACTOR, SPEED_FACTOR_DEFAULT));
 	}
 
 	public boolean isTimeDithering() {

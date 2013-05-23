@@ -59,7 +59,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.softwaresemantics.diyglsllwp.InternetAsyncGalleryTask.UINotifier;
 
 /**
  * Main activity / view
@@ -648,7 +647,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		DIYGslSurface.setRenderGuard(true);
 
 		mySurface = new DIYGslSurface(code, true, 4, true, true, true, 4, true,
-				60, true);
+				60, true, 1.0f);
 		mySurface.setScreenshotProc(this);
 
 		// impossible to check immediately for GL20 / Surface is created
@@ -856,7 +855,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 				prefs.getTimeDitheringFactor(),
 				prefs.getTimeLoopPeriod() != null,
 				prefs.getTimeLoopPeriod() != null ? prefs.getTimeLoopPeriod()
-						: 60, prefs.isForceMediumP());
+						: 60, prefs.isForceMediumP(), prefs.getSpeedFactor());
 
 		glslView = initializeForView(mySurface, cfg);
 

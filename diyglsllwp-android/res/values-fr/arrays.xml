@@ -35,5 +35,22 @@
         <item>"6pi"</item>
         <item>"none"</item>
     </string-array>
+    
+         <string-array name="speedFactor">
+        <item>Normal (1x)</item>
+        <item>Double (2x)</item>
+        <item>Quadruple (4x)</item>
+        <item>50% (1/2x)</item>
+        <item>25% (1/4x)</item>
+        <item>12,5% (1/8x)</item>
+    </string-array>
+    <string-array name="speedFactorValues">
+        <item>"1"</item>
+        <item>"2"</item>
+        <item>"4"</item>
+        <item>"0.5"</item>
+        <item>"0.25"</item>
+        <item>"0.125"</item>
+    </string-array>
 
 </resources>
