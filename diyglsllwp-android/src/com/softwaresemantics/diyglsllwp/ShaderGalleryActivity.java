@@ -748,7 +748,7 @@ public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 			value.setSelected(false);
 		}
 
-		currentSelectedIndex = -1;
+		currentSelectedIndex = 0;
 		setSelection(currentSelectedIndex);
 	}
 
