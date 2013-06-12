@@ -13,6 +13,7 @@
  ******************************************************************************/
 package com.softwaresemantics.diyglsllwp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.view.Display;
@@ -23,11 +24,10 @@ import com.badlogic.gdx.backends.android.surfaceview.ResolutionStrategy;
 /**
  * 
  * @author cmh
- *
+ * 
  */
 public class PreviewResStrategy implements ResolutionStrategy {
-	
-	
+
 	private Context context;
 	private int reservedHeight;
 
@@ -36,16 +36,22 @@ public class PreviewResStrategy implements ResolutionStrategy {
 		this.reservedHeight = reservedHeight;
 	}
 
-	
+	@SuppressLint("NewApi")
 	@Override
 	public MeasuredDimension calcMeasures(int ignored0, int ignored1) {
-		
+
 		WindowManager wm = (WindowManager) context
 				.getSystemService(Context.WINDOW_SERVICE);
 
 		Display display = wm.getDefaultDisplay();
 		Point size = new Point();
-		display.getSize(size);
+		try {
+			display.getSize(size);
+		} catch (NoSuchMethodError err) {
+			// used when SDK_INT < 13
+			size.x = display.getWidth();
+			//size.y = display.getHeight();
+		}
 
 		return new MeasuredDimension(size.x, reservedHeight);
 	}
