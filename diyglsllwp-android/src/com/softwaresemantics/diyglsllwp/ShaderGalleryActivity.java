@@ -72,13 +72,13 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 public class ShaderGalleryActivity extends CustomAndroidGDXApp implements
 		ScreenshotProcessor, ClickHandler, NativeCallback {
 
-	private static final String HTTP_GLSL_HEROKU_COM_ITEM = "http://glsl.heroku.com/item/";
+	private static final String HTTP_GLSL_HEROKU_COM_ITEM = "http://glslsandbox.com/item/";
 
 	private static final String COM_SOFTWARESEMANTICS_DIYGLSLLWP_PREFS_LWP = "com.softwaresemantics.diyglsllwp.LivewallpaperSettings";
 
 	static final String DIY_GLSL_LWP_DIR_NAME = "DiyGlslLwp";
 
-	private static final String COM_HEROKU_GLSL = "com.heroku.glsl";
+	private static final String COM_HEROKU_GLSL = "com.glslsandbox";
 
 	private static final int _200_PX = 200;
 
